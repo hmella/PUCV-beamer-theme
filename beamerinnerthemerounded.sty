@@ -29,10 +29,15 @@
 \defbeamertemplate*{title page}{cib1}[1][]
 {
   \thispagestyle{empty}
-  \begin{textblock*}{14cm}(-1.5cm, -1.5cm)
-      \begin{beamercolorbox}{title page header}
-          {\transparent{0.225}{\includegraphics[height=1.1\paperheight]{logo/heart_mesh.png}}}
-      \end{beamercolorbox}%
+  % \begin{textblock*}{14cm}(-1.5cm, -1.5cm)
+  %     \begin{beamercolorbox}{title page header}
+  %         {\transparent{0.225}{\includegraphics[height=1.1\paperheight]{logo/heart_mesh.png}}}
+  %     \end{beamercolorbox}%
+  % \end{textblock*}
+  \begin{textblock*}{\paperwidth}(-0.725cm, -1.25cm)
+    \begin{beamercolorbox}{title page header}
+        {\transparent{0.25}\centering{\includegraphics[width=1.05\paperwidth]{logo/fachada_pucv.png}}}
+    \end{beamercolorbox}%
   \end{textblock*}
 
   \begin{textblock*}{8cm}(\paperwidth-9.0cm, 0.65\paperheight)
@@ -43,7 +48,7 @@
       \end{beamercolorbox}
   \end{textblock*}
 
-  \vskip1cm
+  \vskip2cm
   \hfil
   \begin{beamercolorbox}[center,wd=0.8\paperwidth,#1]{title page header}
       \color{PUCV lblue}\usebeamerfont{PUCV title}\inserttitle\par%
@@ -52,12 +57,12 @@
   \vskip0.2cm%
   \hfil
   \begin{beamercolorbox}[center,wd=0.8\paperwidth,#1]{author}
-      \color{PUCV gray!70}\usebeamerfont{PUCV auth}{\insertauthor}%
+      \color{PUCV gray}\usebeamerfont{PUCV auth}{\insertauthor}%
   \end{beamercolorbox}
 
   \hfil
   \begin{beamercolorbox}[center, wd=0.8\paperwidth,#1]{date}
-    \color{PUCV gray!70}\usebeamerfont{PUCV date}{\insertdate}%
+    \color{PUCV gray}\usebeamerfont{PUCV date}{\insertdate}%
   \end{beamercolorbox}
 
   \vfill
