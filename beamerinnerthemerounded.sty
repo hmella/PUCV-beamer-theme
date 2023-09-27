@@ -29,22 +29,29 @@
 \defbeamertemplate*{title page}{cib1}[1][]
 {
   \thispagestyle{empty}
-  % \begin{textblock*}{14cm}(-1.5cm, -1.5cm)
-  %     \begin{beamercolorbox}{title page header}
-  %         {\transparent{0.225}{\includegraphics[height=1.1\paperheight]{logo/heart_mesh.png}}}
-  %     \end{beamercolorbox}%
-  % \end{textblock*}
-  \begin{textblock*}{\paperwidth}(-0.725cm, -1.25cm)
-    \begin{beamercolorbox}{title page header}
-        {\transparent{0.25}\centering{\includegraphics[width=1.05\paperwidth]{logo/fachada_pucv_compressed.jpg}}}
-    \end{beamercolorbox}%
+  % Logo
+  \begin{textblock*}{\paperwidth}(-1cm, 4.3cm)
+    {\transparent{1.0}\centering{\includegraphics[scale=0.125]{logo/PUCV_logo.png}}}
+  \end{textblock*}
+
+  % Picture
+  \begin{textblock*}{\paperwidth}(-0.725cm, -1.38cm)
+    {\transparent{1.0}\centering{\includegraphics[width=1.05\paperwidth]{logo/PUCV_drawing.png}}}
+  \end{textblock*}
+
+  % Bottom line
+  \begin{textblock*}{\paperwidth}(0cm, 7.35cm)
+    \hbox{%
+      \begin{beamercolorbox}[wd=1.05\paperwidth,ht=1.0ex,dp=1ex,leftskip=2ex,rightskip=2ex,sep=0pt]{date in head/foot}%
+      \end{beamercolorbox}
+    }%
   \end{textblock*}
 
   \begin{textblock*}{8cm}(\paperwidth-9.0cm, 0.65\paperheight)
       \begin{beamercolorbox}{cib}
           \begin{flushright}
               \color{PUCV gray!70}\usebeamerfont{PUCV inst}{\insertinstitute}
-          \end{flushright}	
+          \end{flushright}
       \end{beamercolorbox}
   \end{textblock*}
 
@@ -67,5 +74,5 @@
 
   \vfill
 }
-  
+
 \mode<all>
