@@ -30,24 +30,27 @@
 {
   \thispagestyle{empty}
   % Logo
-  \begin{textblock*}{\paperwidth}(-1cm, 4.3cm)
-    {\transparent{1.0}\centering{\includegraphics[scale=0.125]{logo/PUCV_logo.png}}}
+  \begin{textblock*}{2cm}(5pt,\paperheight-2.37cm-1.65ex-5pt)
+    {
+      \transparent{0.8}
+      \includegraphics[width=\textwidth]{logo/PUCV_logo.png}
+    }
   \end{textblock*}
 
   % Picture
-  \begin{textblock*}{\paperwidth}(-0.725cm, -1.38cm)
-    {\transparent{1.0}\centering{\includegraphics[width=1.05\paperwidth]{logo/PUCV_drawing.png}}}
+  \begin{textblock*}{\paperwidth}(0cm, 0cm)
+    \includegraphics[width=\paperwidth]{logo/PUCV_drawing.png}
   \end{textblock*}
 
   % Bottom line
-  \begin{textblock*}{\paperwidth}(0cm, 7.35cm)
+  \begin{textblock*}{\paperwidth}(0cm, \paperheight-1.65ex)
     \hbox{%
-      \begin{beamercolorbox}[wd=1.05\paperwidth,ht=1.0ex,dp=1ex,leftskip=2ex,rightskip=2ex,sep=0pt]{date in head/foot}%
+      \begin{beamercolorbox}[wd=1.0\paperwidth,ht=1.0ex,dp=1ex,leftskip=2ex,rightskip=2ex,sep=0pt]{date in head/foot}%
       \end{beamercolorbox}
     }%
   \end{textblock*}
 
-  \begin{textblock*}{8cm}(\paperwidth-9.0cm, 0.65\paperheight)
+  \begin{textblock*}{6cm}(\paperwidth-6.35cm, 0.825\paperheight)
       \begin{beamercolorbox}{cib}
           \begin{flushright}
               \color{PUCV gray!70}\usebeamerfont{PUCV inst}{\insertinstitute}
