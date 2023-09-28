@@ -1,0 +1,53 @@
+% Copyright 2023 by Hernan Mella
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+%
+% See the file doc/licenses/LICENSE for more details.
+\ProvidesPackage{beamerthemePUCV}
+  [2023/09/27 v1.0 beamer 'PUCV' theme]
+
+\mode<presentation>
+
+% Requirement
+\RequirePackage{tikz}
+\RequirePackage{graphicx}
+\RequirePackage{transparent}
+% \RequirePackage[absolute,showboxes,overlay]{textpos}
+\RequirePackage[absolute,overlay]{textpos}
+\textblockorigin{0pt}{0pt}
+\RequirePackage{calc}
+\RequirePackage[pages=some,angle=0,opacity=0.7]{background}
+\newif\ifbeamer@secheader
+\beamer@secheaderfalse
+
+\DeclareOptionBeamer{secheader}{\beamer@secheadertrue}
+\ProcessOptionsBeamer
+
+% User defined colors
+\definecolor{PUCV gray}{RGB}{78,74,71}
+\definecolor{PUCV blue}{RGB}{41,88,140}
+\definecolor{PUCV lblue}{RGB}{0, 110, 182}
+
+% User defined fonts
+\setbeamerfont{PUCV title}{shape=\bfseries\Large}
+\setbeamerfont{PUCV inst}{shape=\bfseries\scriptsize}
+\setbeamerfont{PUCV auth}{shape=\bfseries\small}
+\setbeamerfont{PUCV date}{shape=\bfseries\small}
+% \setbeamerfont{PUCV title}{shape=\bfseries\Large}
+% \setbeamerfont{PUCV inst}{shape=\scshape\bfseries\scriptsize}
+% \setbeamerfont{PUCV auth}{shape=\scshape\bfseries\small}
+% \setbeamerfont{PUCV date}{shape=\scshape\bfseries\small}
+
+\usecolortheme{framesPUCV}
+\usecolortheme{blocksPUCV}
+% \useinnertheme[shadow]{rounded}
+\useinnertheme{roundedPUCV}
+\useoutertheme{infolinesPUCV}
+
+\ifbeamer@secheader\else\setbeamertemplate{headline}[default]\fi
+
+\mode
+<all>
