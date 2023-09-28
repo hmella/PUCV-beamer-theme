@@ -23,6 +23,10 @@
 \newif\ifbeamer@secheader
 \beamer@secheaderfalse
 
+% PUCV institutional font
+\usepackage[sfdefault]{roboto}  %% Option 'sfdefault' only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+
 \DeclareOptionBeamer{secheader}{\beamer@secheadertrue}
 \ProcessOptionsBeamer
 
@@ -38,8 +42,8 @@
 \setbeamerfont{PUCV date}{shape=\bfseries\small}
 % \setbeamerfont{PUCV title}{shape=\bfseries\Large}
 % \setbeamerfont{PUCV inst}{shape=\scshape\bfseries\scriptsize}
-% \setbeamerfont{PUCV auth}{shape=\scshape\bfseries\small}
-% \setbeamerfont{PUCV date}{shape=\scshape\bfseries\small}
+% \setbeamerfont{PUCV auth}{shape=\bfseries\small}
+% \setbeamerfont{PUCV date}{shape=\bfseries\small}
 
 \usecolortheme{framesPUCV}
 \usecolortheme{blocksPUCV}
