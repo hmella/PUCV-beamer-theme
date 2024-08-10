@@ -30,10 +30,27 @@
 \DeclareOptionBeamer{secheader}{\beamer@secheadertrue}
 \ProcessOptionsBeamer
 
+% Declare option to define custom color themes
+\DeclareOptionBeamer{style}{
+    \PassOptionsToPackage{style=#1}{beamercolorthemeframesPUCV}
+}
+\ExecuteOptionsBeamer{style=mono} % default value
+\ProcessOptionsBeamer
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Monochromatic
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % User defined colors
-\definecolor{PUCV gray}{RGB}{78,74,71}
-\definecolor{PUCV blue}{RGB}{41,88,140}
+\definecolor{PUCV gray}{RGB}{78, 74, 71}
+\definecolor{PUCV blue}{RGB}{41, 88, 140}
 \definecolor{PUCV lblue}{RGB}{0, 110, 182}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Color
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% User defined colors
+\definecolor{PUCV red}{RGB}{167, 81, 84}
+\definecolor{PUCV brown}{RGB}{183, 140, 48}
 
 % User defined fonts
 \setbeamerfont{PUCV title}{shape=\bfseries\Large}

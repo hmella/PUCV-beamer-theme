@@ -6,20 +6,32 @@
 
 \mode<presentation>
 
-\setbeamercolor*{palette primary}{use=structure,fg=white,bg=PUCV lblue}
-\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=PUCV lblue!75!black}
-\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=PUCV lblue!50!black}
-\setbeamercolor*{palette quaternary}{fg=white,bg=black}
+\DeclareOptionBeamer{style}{\def\beamer@PUCV@style{#1}}
+\ExecuteOptionsBeamer{style=mono} % blue will be default if nothing is given
+\ProcessOptionsBeamer
 
-\setbeamercolor*{sidebar}{use=structure,bg=PUCV lblue}
-  
+\def\beamer@PUCV@stylemono{mono}%
+\def\beamer@PUCV@stylecolor{color}%
+
+\ifx\beamer@PUCV@style\beamer@PUCV@stylemono%
+    \setbeamercolor*{palette primary}{use=structure,fg=white,bg=PUCV lblue}
+    \setbeamercolor*{palette secondary}{use=structure,fg=white,bg=PUCV lblue!75!black}
+    \setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=PUCV lblue!50!black}
+\else% 
+    \ifx\beamer@PUCV@style\beamer@PUCV@stylecolor%
+        \setbeamercolor*{palette primary}{use=structure,fg=white,bg=PUCV red}
+        \setbeamercolor*{palette secondary}{use=structure,fg=white,bg=PUCV lblue!75!black}
+        \setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=PUCV brown}
+    \fi%
+\fi%
+
+\setbeamercolor*{palette quaternary}{fg=white,bg=black}
+\setbeamercolor*{sidebar}{use=structure,bg=PUCV lblue}  
 \setbeamercolor*{palette sidebar primary}{use=structure,fg=PUCV lblue!10}
 \setbeamercolor*{palette sidebar secondary}{fg=white}
 \setbeamercolor*{palette sidebar tertiary}{use=structure,fg=PUCV lblue!50}
 \setbeamercolor*{palette sidebar quaternary}{fg=white}
-
 \setbeamercolor*{titlelike}{parent=palette primary}
-
 \setbeamercolor*{separation line}{}
 \setbeamercolor*{fine separation line}{}
 
