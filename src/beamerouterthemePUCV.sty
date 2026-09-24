@@ -1,0 +1,158 @@
+%% beamerouterthemePUCV.sty
+%% Tema externo del tema beamer PUCV: títulos de diapositiva, pie de página y
+%% barra de progreso.
+%%
+%% Copyright 2023-2026 Hernán Mella
+%%
+%% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
+%% Consulte el archivo LICENSE para más detalles.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerouterthemePUCV}[2026/09/23 v2.0 Tema externo beamer PUCV]
+
+\RequirePackage{tikz}
+
+% Valores de respaldo cuando el tema externo se carga por separado.
+\providecommand*{\pucv@progressbar}{foot}
+\providecommand*{\pucv@numbering}{fraction}
+
+\mode<presentation>
+
+\setbeamersize{text margin left=0.9cm, text margin right=0.9cm}
+
+\newlength{\pucv@progress}
+\newlength{\pucv@barht}
+\setlength{\pucv@barht}{2pt}
+
+%% ---------------------------------------------------------------------------
+%% Barra de progreso
+%% ---------------------------------------------------------------------------
+\newcommand*{\pucv@progressbar@draw}{%
+  \pgfmathsetlength{\pucv@progress}{%
+    \paperwidth*min(\the\c@framenumber/max(\inserttotalframenumber,1),1)}%
+  \usebeamercolor{progress bar}%
+  \begin{tikzpicture}
+    \useasboundingbox (0,0) rectangle (\paperwidth,\pucv@barht);
+    \fill[progress bar.bg] (0,0) rectangle (\paperwidth,\pucv@barht);
+    \fill[progress bar.fg] (0,0) rectangle (\pucv@progress,\pucv@barht);
+  \end{tikzpicture}%
+}
+
+%% ---------------------------------------------------------------------------
+%% Encabezado y pie de página
+%% ---------------------------------------------------------------------------
+\def\pucv@tmp{head}
+\ifx\pucv@progressbar\pucv@tmp
+  \setbeamertemplate{headline}{\nointerlineskip\pucv@progressbar@draw}
+\else
+  \setbeamertemplate{headline}{}
+\fi
+
+\def\pucv@tmp{fraction}
+\ifx\pucv@numbering\pucv@tmp
+  \setbeamertemplate{page number in head/foot}{%
+    \insertframenumber\,/\,\inserttotalframenumber}
+\else
+  \def\pucv@tmp{counter}
+  \ifx\pucv@numbering\pucv@tmp
+    \setbeamertemplate{page number in head/foot}{\insertframenumber}
+  \else
+    \setbeamertemplate{page number in head/foot}{}
+  \fi
+\fi
+
+% Compone #2 en un ancho máximo #1: si no cabe, conserva las palabras de la
+% primera línea de un párrafo de ese ancho y agrega puntos suspensivos.
+\newsavebox{\pucv@linebox}
+\newcommand*{\pucv@truncate}[2]{%
+  \sbox{\pucv@linebox}{#2}%
+  \ifdim\wd\pucv@linebox>#1\relax
+    \setbox\pucv@linebox\vbox{%
+      \hsize\dimexpr#1-1.5em\relax
+      \leftskip\z@ \rightskip\z@\@plus1fil \parfillskip\z@\@plus1fil
+      \hyphenpenalty\@M \exhyphenpenalty\@M
+      \pretolerance\m@ne \tolerance\@M \emergencystretch\z@
+      \noindent#2\par}%
+    {\splittopskip\z@ \vbadness\@M \vfuzz\maxdimen
+     \setbox\pucv@linebox\vsplit\pucv@linebox to\z@
+     \setbox\pucv@linebox\vbox{\unvbox\pucv@linebox\global\setbox\@ne\lastbox}}%
+    \hbox{\unhbox\@ne\unskip\unskip\,\dots}%
+  \else
+    \usebox{\pucv@linebox}%
+  \fi
+}
+
+% "Autor corto · Título corto" a la izquierda y número de diapositiva a la
+% derecha. Primero se expande el texto (se omiten las marcas \inst y \and y
+% \\ se convierten en separadores). El autor ocupa como máximo el 35% del
+% ancho y el título el resto; cada uno se trunca con puntos suspensivos si es
+% demasiado largo.
+\newsavebox{\pucv@footauthorbox}
+\newcommand*{\pucv@footlinetext}{%
+  \begingroup
+    \def\inst##1{}\def\and{\unskip, }\def\\{ }%
+    \protected@edef\pucv@shortauthor{\beamer@shortauthor}%
+    \protected@edef\pucv@shorttitle{\beamer@shorttitle}%
+    \ifx\pucv@shortauthor\@empty
+      \sbox{\pucv@footauthorbox}{}%
+    \else
+      \sbox{\pucv@footauthorbox}{%
+        \pucv@truncate{0.35\pucv@footlinewd}{\pucv@shortauthor}%
+        \ifx\pucv@shorttitle\@empty\else\enspace\textperiodcentered\enspace\fi}%
+    \fi
+    \usebox{\pucv@footauthorbox}%
+    \pucv@truncate{\dimexpr\pucv@footlinewd-\wd\pucv@footauthorbox\relax}%
+      {\pucv@shorttitle}%
+  \endgroup
+}
+
+% Ancho disponible para el texto del pie (el resto se reserva para el número).
+\newlength{\pucv@footlinewd}
+
+\defbeamertemplate*{footline}{pucv}{%
+  \begin{beamercolorbox}[wd=\paperwidth, ht=2.5ex, dp=1.8ex,
+      leftskip=\beamer@leftmargin, rightskip=\beamer@rightmargin]{footline}%
+    \usebeamerfont{footline}%
+    \setlength{\pucv@footlinewd}{%
+      \dimexpr\paperwidth-\beamer@leftmargin-\beamer@rightmargin-1.5cm\relax}%
+    \pucv@footlinetext\hfill
+    {\usebeamercolor[fg]{page number in head/foot}%
+     \usebeamerfont{page number in head/foot}%
+     \usebeamertemplate{page number in head/foot}}%
+  \end{beamercolorbox}%
+  \def\pucv@tmp{foot}%
+  \ifx\pucv@progressbar\pucv@tmp
+    \nointerlineskip\pucv@progressbar@draw
+  \fi
+}
+
+%% ---------------------------------------------------------------------------
+%% Título de diapositiva
+%% ---------------------------------------------------------------------------
+% Título alineado a la izquierda seguido de una línea fina con un tramo corto
+% de acento.
+\defbeamertemplate*{frametitle}{pucv}{%
+  \nointerlineskip
+  \vskip0.45cm
+  \begin{beamercolorbox}[wd=\paperwidth,
+      leftskip=\beamer@leftmargin, rightskip=\beamer@rightmargin]{frametitle}%
+    \usebeamerfont{frametitle}\strut\insertframetitle\par
+    \ifx\insertframesubtitle\@empty\else
+      {\usebeamercolor[fg]{framesubtitle}\usebeamerfont{framesubtitle}%
+        \insertframesubtitle\par}%
+    \fi
+    \vskip0.35em
+    \usebeamercolor{title rule}%
+    \begin{tikzpicture}
+      \useasboundingbox (0,0) rectangle
+        (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,1.2pt);
+      \fill[title rule.bg] (0,0) rectangle
+        (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,0.5pt);
+      \fill[title rule.fg] (0,0) rectangle (2.5em,1.2pt);
+    \end{tikzpicture}%
+  \end{beamercolorbox}%
+  \vskip0.2em
+}
+
+\mode<all>
+
+\endinput

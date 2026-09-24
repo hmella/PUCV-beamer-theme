@@ -1,74 +1,122 @@
-% Copyright 2023 by Hernan Mella
-%
-% This file may be distributed and/or modified under the MIT License.
-%
-% See the file LICENSE for more details.
-\ProvidesPackage{beamerthemePUCV}
-  [2023/09/27 v1.0 beamer 'PUCV' theme]
+%% beamerthemePUCV.sty
+%% Tema beamer de la Pontificia Universidad Católica de Valparaíso (PUCV).
+%%
+%% Copyright 2023-2026 Hernán Mella
+%%
+%% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
+%% Consulte el archivo LICENSE para más detalles.
+%%
+%% Uso:
+%%   \usetheme[<clave>=<valor>, ...]{PUCV}
+%%
+%% Opciones:
+%%   mode        = light | dark                 (por defecto: light)
+%%   accent      = blue | red | gold            (por defecto: blue)
+%%   progressbar = foot | head | none           (por defecto: foot)
+%%   sectionpage = true | false                 (por defecto: true)
+%%   numbering   = fraction | counter | none    (por defecto: fraction)
+%%   titleimage  = <archivo> | none             (por defecto: dibujo de la Casa Central)
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemePUCV}[2026/09/23 v2.0 Tema beamer PUCV]
+
+\RequirePackage{pgfopts}
 
 \mode<presentation>
 
-% Requirement
-\RequirePackage{tikz}
-\RequirePackage{graphicx}
-\RequirePackage{transparent}
-% \RequirePackage[absolute,showboxes,overlay]{textpos}
-\RequirePackage[absolute,overlay]{textpos}
-\textblockorigin{0pt}{0pt}
-\RequirePackage{calc}
-\RequirePackage[pages=some,angle=0,opacity=0.7]{background}
-\newif\ifbeamer@secheader
-\beamer@secheaderfalse
+%% ---------------------------------------------------------------------------
+%% Opciones
+%% ---------------------------------------------------------------------------
+\newif\ifpucv@dark
+\newif\ifpucv@sectionpage
 
-% PUCV institutional font
-\RequirePackage[sfdefault]{roboto}  %% Option 'sfdefault' only if the base font of the document is to be sans serif
-\RequirePackage[T1]{fontenc}
+\pgfkeys{
+  /pucv/.is family, /pucv,
+  mode/.is choice,
+  mode/light/.code       = \pucv@darkfalse,
+  mode/dark/.code        = \pucv@darktrue,
+  accent/.is choice,
+  accent/blue/.code      = \def\pucv@accent{blue},
+  accent/red/.code       = \def\pucv@accent{red},
+  accent/gold/.code      = \def\pucv@accent{gold},
+  progressbar/.is choice,
+  progressbar/foot/.code = \def\pucv@progressbar{foot},
+  progressbar/head/.code = \def\pucv@progressbar{head},
+  progressbar/none/.code = \def\pucv@progressbar{none},
+  sectionpage/.is if     = pucv@sectionpage,
+  numbering/.is choice,
+  numbering/fraction/.code = \def\pucv@numbering{fraction},
+  numbering/counter/.code  = \def\pucv@numbering{counter},
+  numbering/none/.code     = \def\pucv@numbering{none},
+  titleimage/.store in   = \pucv@titleimage,
+  % Valores por defecto
+  mode        = light,
+  accent      = blue,
+  progressbar = foot,
+  sectionpage = true,
+  numbering   = fraction,
+  titleimage  = default,
+}
+\ProcessPgfPackageOptions{/pucv}
 
-% Remove navigation symbols
+%% ---------------------------------------------------------------------------
+%% Subtemas
+%% ---------------------------------------------------------------------------
+\usecolortheme{PUCV}
+\usefonttheme{PUCV}
+\useinnertheme{PUCV}
+\useoutertheme{PUCV}
+
 \beamertemplatenavigationsymbolsempty
 
-\DeclareOptionBeamer{secheader}{\beamer@secheadertrue}
-\ProcessOptionsBeamer
-
-% Declare option to define custom color themes
-\DeclareOptionBeamer{style}{
-    \PassOptionsToPackage{style=#1}{beamercolorthemeframesPUCV}
+%% ---------------------------------------------------------------------------
+%% Traducciones al español de los entornos de beamer (solo se aplican cuando el
+%% documento está en español, p. ej. con \usepackage[spanish]{babel}).
+%% ---------------------------------------------------------------------------
+% Según la versión de babel, el idioma se identifica como `Spanish' o
+% `spanish', por lo que se registran ambos.
+\newcommand*{\pucv@spanish}[2]{%
+  \deftranslation[to=Spanish]{#1}{#2}%
+  \deftranslation[to=spanish]{#1}{#2}%
 }
-\ExecuteOptionsBeamer{style=mono} % default value
-\ProcessOptionsBeamer
+\pucv@spanish{Theorem}{Teorema}
+\pucv@spanish{Corollary}{Corolario}
+\pucv@spanish{Fact}{Hecho}
+\pucv@spanish{Lemma}{Lema}
+\pucv@spanish{Problem}{Problema}
+\pucv@spanish{Solution}{Solución}
+\pucv@spanish{Definition}{Definición}
+\pucv@spanish{Definitions}{Definiciones}
+\pucv@spanish{Example}{Ejemplo}
+\pucv@spanish{Examples}{Ejemplos}
+\pucv@spanish{Proof}{Demostración}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Monochromatic
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% User defined colors
-\definecolor{PUCV gray}{RGB}{78, 74, 71}
-\definecolor{PUCV blue}{RGB}{41, 88, 140}
-\definecolor{PUCV lblue}{RGB}{0, 110, 182}
+%% ---------------------------------------------------------------------------
+%% Portada: \maketitle genera una diapositiva de portada a sangre y sin numerar.
+%% ---------------------------------------------------------------------------
+\renewcommand*{\maketitle}{%
+  \ifbeamer@inframe
+    \titlepage
+  \else
+    {%
+      \setbeamertemplate{background}[pucv title]%
+      \frame[plain,noframenumbering,t]{\titlepage}%
+    }%
+  \fi
+}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Color
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% User defined colors
-\definecolor{PUCV red}{RGB}{167, 81, 84}
-\definecolor{PUCV brown}{RGB}{183, 140, 48}
+%% ---------------------------------------------------------------------------
+%% Diapositivas separadoras de sección automáticas
+%% ---------------------------------------------------------------------------
+\ifpucv@sectionpage
+  \AtBeginSection{%
+    \ifbeamer@inframe
+      \sectionpage
+    \else
+      \frame[plain,noframenumbering]{\sectionpage}%
+    \fi
+  }
+\fi
 
-% User defined fonts
-\setbeamerfont{PUCV title}{shape=\bfseries\Large}
-\setbeamerfont{PUCV inst}{shape=\bfseries\scriptsize}
-\setbeamerfont{PUCV auth}{shape=\bfseries\small}
-\setbeamerfont{PUCV date}{shape=\bfseries\small}
-% \setbeamerfont{PUCV title}{shape=\bfseries\Large}
-% \setbeamerfont{PUCV inst}{shape=\scshape\bfseries\scriptsize}
-% \setbeamerfont{PUCV auth}{shape=\bfseries\small}
-% \setbeamerfont{PUCV date}{shape=\bfseries\small}
+\mode<all>
 
-\usecolortheme{framesPUCV}
-\usecolortheme{blocksPUCV}
-% \useinnertheme[shadow]{rounded}
-\useinnertheme{roundedPUCV}
-\useoutertheme{infolinesPUCV}
-
-\ifbeamer@secheader\else\setbeamertemplate{headline}[default]\fi
-
-\mode
-<all>
+\endinput

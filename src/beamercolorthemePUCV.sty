@@ -1,0 +1,133 @@
+%% beamercolorthemePUCV.sty
+%% Tema de colores del tema beamer PUCV.
+%%
+%% Copyright 2023-2026 Hernán Mella
+%%
+%% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
+%% Consulte el archivo LICENSE para más detalles.
+%%
+%% Los colores se organizan en dos capas:
+%%   1. Paleta institucional (pucv-blue, pucv-navy, pucv-red, pucv-gold,
+%%      pucv-gray), tomada de las normas gráficas de la PUCV.
+%%   2. Roles semánticos (pucv-bg, pucv-fg, pucv-muted, pucv-rule, pucv-accent,
+%%      pucv-alert, pucv-example), que dependen del modo claro/oscuro.
+%% Todos los colores de beamer se derivan solo de los roles semánticos, de modo
+%% que ambos modos comparten un único conjunto de definiciones.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamercolorthemePUCV}[2026/09/23 v2.0 Tema de colores beamer PUCV]
+
+% Valores de respaldo cuando el tema de colores se carga por separado.
+\@ifundefined{ifpucv@dark}{\newif\ifpucv@dark}{}
+\providecommand*{\pucv@accent}{blue}
+
+\mode<presentation>
+
+%% ---------------------------------------------------------------------------
+%% Paleta institucional
+%% ---------------------------------------------------------------------------
+\definecolor{pucv-blue}{RGB}{0,110,182}
+\definecolor{pucv-navy}{RGB}{41,88,140}
+\definecolor{pucv-red}{RGB}{167,81,84}
+\definecolor{pucv-gold}{RGB}{183,140,48}
+\definecolor{pucv-gray}{RGB}{78,74,71}
+
+%% ---------------------------------------------------------------------------
+%% Roles semánticos
+%% ---------------------------------------------------------------------------
+% Variantes de cada color institucional aptas para texto (contraste >= 4.5:1
+% respecto de pucv-bg).
+\ifpucv@dark
+  \definecolor{pucv-bg}{RGB}{16,24,36}
+  \definecolor{pucv-fg}{RGB}{230,234,240}
+  \definecolor{pucv-muted}{RGB}{154,165,180}
+  \colorlet{pucv-text-blue}{pucv-blue!55!white}
+  \colorlet{pucv-text-red}{pucv-red!55!white}
+  \colorlet{pucv-text-gold}{pucv-gold!65!white}
+\else
+  \definecolor{pucv-bg}{RGB}{255,255,255}
+  \colorlet{pucv-fg}{pucv-gray!80!black}
+  \colorlet{pucv-muted}{pucv-gray!85!white}
+  \colorlet{pucv-text-blue}{pucv-blue}
+  \colorlet{pucv-text-red}{pucv-red}
+  \colorlet{pucv-text-gold}{pucv-gold!70!black}
+\fi
+\colorlet{pucv-rule}{pucv-fg!15!pucv-bg}
+
+% Asignación del acento: los otros colores institucionales se usan para
+% alertas y ejemplos.
+\def\pucv@tmp{red}
+\ifx\pucv@accent\pucv@tmp
+  \colorlet{pucv-accent}{pucv-text-red}
+  \colorlet{pucv-alert}{pucv-text-gold}
+  \colorlet{pucv-example}{pucv-text-blue}
+\else
+  \def\pucv@tmp{gold}
+  \ifx\pucv@accent\pucv@tmp
+    \colorlet{pucv-accent}{pucv-text-gold}
+    \colorlet{pucv-alert}{pucv-text-red}
+    \colorlet{pucv-example}{pucv-text-blue}
+  \else
+    \colorlet{pucv-accent}{pucv-text-blue}
+    \colorlet{pucv-alert}{pucv-text-red}
+    \colorlet{pucv-example}{pucv-text-gold}
+  \fi
+\fi
+
+%% ---------------------------------------------------------------------------
+%% Colores de beamer
+%% ---------------------------------------------------------------------------
+\setbeamercolor{normal text}{fg=pucv-fg, bg=pucv-bg}
+\setbeamercolor{structure}{fg=pucv-accent}
+\setbeamercolor{alerted text}{fg=pucv-alert}
+\setbeamercolor{example text}{fg=pucv-example}
+\setbeamercolor{background canvas}{bg=pucv-bg}
+
+% Títulos
+\setbeamercolor{titlelike}{fg=pucv-fg}
+\setbeamercolor{title}{fg=pucv-fg}
+\setbeamercolor{subtitle}{fg=pucv-accent}
+\setbeamercolor{author}{fg=pucv-fg}
+\setbeamercolor{institute}{fg=pucv-muted}
+\setbeamercolor{date}{fg=pucv-muted}
+\setbeamercolor{frametitle}{fg=pucv-fg}
+\setbeamercolor{framesubtitle}{fg=pucv-muted}
+\setbeamercolor{section title}{fg=pucv-fg}
+\setbeamercolor{section number}{fg=pucv-accent}
+\setbeamercolor{title rule}{fg=pucv-accent, bg=pucv-rule}
+
+% Encabezado y pie de página
+\setbeamercolor{footline}{fg=pucv-muted}
+\setbeamercolor{page number in head/foot}{fg=pucv-muted}
+\setbeamercolor{progress bar}{fg=pucv-accent, bg=pucv-rule}
+
+% Listas e índice
+\setbeamercolor{item}{fg=pucv-accent}
+\setbeamercolor{subitem}{fg=pucv-muted}
+\setbeamercolor{subsubitem}{fg=pucv-muted}
+\setbeamercolor{enumerate item}{fg=pucv-accent}
+\setbeamercolor{section in toc}{fg=pucv-fg}
+\setbeamercolor{subsection in toc}{fg=pucv-muted}
+\setbeamercolor{section number projected}{fg=pucv-bg, bg=pucv-accent}
+
+% Bloques: banda de título teñida y cuerpo más claro, derivados del color del rol.
+\setbeamercolor{block title}{fg=pucv-accent, bg=pucv-accent!10!pucv-bg}
+\setbeamercolor{block body}{fg=pucv-fg, bg=pucv-accent!4!pucv-bg}
+\setbeamercolor{block title alerted}{fg=pucv-alert, bg=pucv-alert!10!pucv-bg}
+\setbeamercolor{block body alerted}{fg=pucv-fg, bg=pucv-alert!4!pucv-bg}
+\setbeamercolor{block title example}{fg=pucv-example, bg=pucv-example!10!pucv-bg}
+\setbeamercolor{block body example}{fg=pucv-fg, bg=pucv-example!4!pucv-bg}
+
+% Otros
+\setbeamercolor{caption name}{fg=pucv-accent}
+\setbeamercolor{button}{fg=pucv-bg, bg=pucv-accent}
+\setbeamercolor{bibliography item}{fg=pucv-accent}
+\setbeamercolor{bibliography entry author}{fg=pucv-fg}
+\setbeamercolor{bibliography entry title}{fg=pucv-fg}
+\setbeamercolor{bibliography entry location}{fg=pucv-muted}
+\setbeamercolor{bibliography entry note}{fg=pucv-muted}
+\setbeamercolor{separation line}{bg=pucv-rule}
+\setbeamercolor{fine separation line}{bg=pucv-rule}
+
+\mode<all>
+
+\endinput

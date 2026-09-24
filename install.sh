@@ -1,5 +1,6 @@
-# Create directory for PUCV theme
-mkdir -p $(kpsewhich -var-value=TEXMFHOME)/tex/latex/PUCV
+#!/usr/bin/env bash
+# Instala el tema beamer PUCV en el TEXMFHOME del usuario.
+set -euo pipefail
 
-# Copy sty files
-cp -r src/* $(kpsewhich -var-value=TEXMFHOME)/tex/latex/PUCV/
+cd "$(dirname "$0")"
+make install

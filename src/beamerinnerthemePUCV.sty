@@ -1,0 +1,258 @@
+%% beamerinnerthemePUCV.sty
+%% Tema interno del tema beamer PUCV: portada, separadores de sección, listas,
+%% bloques e índice.
+%%
+%% Copyright 2023-2026 Hernán Mella
+%%
+%% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
+%% Consulte el archivo LICENSE para más detalles.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerinnerthemePUCV}[2026/09/23 v2.0 Tema interno beamer PUCV]
+
+\RequirePackage{tikz}
+\usetikzlibrary{fadings}
+
+% Valores de respaldo cuando el tema interno se carga por separado.
+\@ifundefined{ifpucv@dark}{\newif\ifpucv@dark}{}
+\providecommand*{\pucv@titleimage}{default}
+
+\mode<presentation>
+
+%% ---------------------------------------------------------------------------
+%% Recursos y utilidades
+%% ---------------------------------------------------------------------------
+\def\pucv@logo{beamerthemePUCV-logo}
+\def\pucv@none{none}
+\def\pucv@default{default}
+
+% Imagen de portada: `default' elige el dibujo de la Casa Central que
+% corresponde al modo actual y `none' desactiva la imagen.
+\ifx\pucv@titleimage\pucv@default
+  \ifpucv@dark
+    \def\pucv@titleimage{beamerthemePUCV-cover-dark}
+  \else
+    \def\pucv@titleimage{beamerthemePUCV-cover-light}
+  \fi
+\fi
+
+\newif\ifpucv@hastitleimage
+\ifx\pucv@titleimage\pucv@none
+  \pucv@hastitleimagefalse
+\else
+  \pucv@hastitleimagetrue
+\fi
+
+% Números de dos dígitos para las secciones (01, 02, ...).
+\newcommand*{\pucv@twodigits}[1]{\ifnum#1<10 0\fi\number#1}
+
+% Línea corta de acento usada en la portada y en los separadores de sección.
+\newcommand*{\pucv@accentrule}{%
+  {\usebeamercolor[fg]{title rule}\rule{2.5em}{2pt}}%
+}
+
+\newsavebox{\pucv@coverbox}
+\newlength{\pucv@coverx}
+\newlength{\pucv@coverwd}
+\newlength{\pucv@titlewd}
+
+% Borde izquierdo de la imagen de portada; el texto se mantiene a su
+% izquierda. La plantilla de portada ajusta ambos para títulos largos (ver
+% más abajo).
+\setlength{\pucv@coverx}{0.5\paperwidth}
+
+% Ancho del bloque de texto de la portada, como fracción #1 del ancho de la
+% página. Con imagen de portada mide al menos 6.4cm (diapositivas angostas
+% 4:3); sin imagen, el bloque ocupa siempre casi todo el ancho.
+\newcommand*{\pucv@settitlewd}[1]{%
+  \ifpucv@hastitleimage
+    \setlength{\pucv@titlewd}{#1\paperwidth}%
+    \ifdim\pucv@titlewd<6.4cm
+      \setlength{\pucv@titlewd}{6.4cm}%
+    \fi
+  \else
+    \setlength{\pucv@titlewd}{0.72\paperwidth}%
+  \fi
+}
+
+% Disco claro difuminado detrás del escudo en modo oscuro: blanco sólido sobre
+% la parte circular del escudo y luego un degradado hacia el fondo. El
+% sombreado se dibuja a su tamaño natural (radio 0.95cm), por lo que las
+% esquinas de su cuadrado son del color pucv-bg.
+\pgfdeclareradialshading{pucv crest glow}{\pgfpoint{0cm}{0cm}}{%
+  color(0cm)=(white); color(0.82cm)=(white); color(0.95cm)=(pucv-bg)}
+
+% Degradado usado como velo entre el texto de la portada y la imagen.
+\tikzfading[name=pucv veil, left color=transparent!0, right color=transparent!100]
+
+%% ---------------------------------------------------------------------------
+%% Portada
+%% ---------------------------------------------------------------------------
+% Fondo a sangre de la portada (imagen, velo y escudo). Lo activa
+% \maketitle, ver beamerthemePUCV.sty.
+\defbeamertemplate{background}{pucv title}{%
+  \begin{tikzpicture}[inner sep=0pt]
+    \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
+    \ifpucv@hastitleimage
+      % Escala la imagen para cubrir el panel derecho y luego la recorta.
+      \pucv@coverwd=\dimexpr\paperwidth-\pucv@coverx\relax
+      \sbox{\pucv@coverbox}{\includegraphics[height=\paperheight]{\pucv@titleimage}}%
+      \ifdim\wd\pucv@coverbox<\pucv@coverwd
+        \sbox{\pucv@coverbox}{\includegraphics[width=\pucv@coverwd]{\pucv@titleimage}}%
+      \fi
+      \begin{scope}
+        \clip (\pucv@coverx,0) rectangle (\paperwidth,\paperheight);
+        \node at ({0.5*(\pucv@coverx+\paperwidth)},0.5\paperheight)
+          {\usebox{\pucv@coverbox}};
+      \end{scope}
+      \fill[pucv-bg, path fading=pucv veil]
+        (\pucv@coverx,0) rectangle ({\pucv@coverx+0.2\paperwidth},\paperheight);
+    \fi
+    % Escudo, sobre un disco claro en modo oscuro para conservar sus colores.
+    % El disco se centra en la parte circular del escudo (57.7% de su altura)
+    % y se difumina hacia el fondo en su borde.
+    \ifpucv@dark
+      \node at (\beamer@leftmargin+0.633cm,\paperheight-1.466cm)
+        {\pgfuseshading{pucv crest glow}};
+    \fi
+    \node[anchor=north west] at (\beamer@leftmargin,\paperheight-0.6cm)
+      {\includegraphics[height=1.5cm]{\pucv@logo}};
+  \end{tikzpicture}%
+}
+
+% Bloque de texto de la portada. #1 y #2 son los tamaños de fuente del título
+% y del subtítulo; los autores separados con \and se listan con comas.
+\newcommand*{\pucv@titleblock}[2]{%
+  \begin{minipage}{\pucv@titlewd}
+    \raggedright
+    \def\beamer@andtitle{\unskip,\space}%
+    {\usebeamercolor[fg]{title}\usebeamerfont{title}#1\inserttitle\par}
+    \ifx\insertsubtitle\@empty\else
+      \vskip0.5em
+      {\usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}#2\insertsubtitle\par}
+    \fi
+    \vskip0.9em
+    \pucv@accentrule\par
+    \vskip0.9em
+    {\usebeamercolor[fg]{author}\usebeamerfont{author}\insertauthor\par}
+    \ifx\insertinstitute\@empty\else
+      \vskip0.3em
+      {\usebeamercolor[fg]{institute}\usebeamerfont{institute}\insertinstitute\par}
+    \fi
+    \ifx\insertdate\@empty\else
+      \vskip0.6em
+      {\usebeamercolor[fg]{date}\usebeamerfont{date}\insertdate\par}
+    \fi
+  \end{minipage}%
+}
+
+% Distribuciones que se prueban en orden hasta que el bloque de texto cabe bajo
+% el escudo, con la forma {ancho del texto}{tamaño del título}{tamaño del
+% subtítulo}: primero un título más pequeño y luego una columna de texto más
+% ancha (la imagen se desplaza a la derecha). Si ninguna cabe, el bloque de la
+% última distribución se reduce completo.
+\def\pucv@titlelayouts{%
+  {0.44}{\LARGE}{\large},%
+  {0.44}{\Large}{\normalsize},%
+  {0.56}{\Large}{\normalsize},%
+  {0.56}{\large}{\small}}
+
+\newsavebox{\pucv@titlebox}
+\newlength{\pucv@titleavail}
+\newif\ifpucv@titlefits
+
+\newcommand*{\pucv@trytitlelayout}[3]{%
+  \pucv@settitlewd{#1}%
+  \sbox{\pucv@titlebox}{\pucv@titleblock{#2}{#3}}%
+  \ifdim\dimexpr\ht\pucv@titlebox+\dp\pucv@titlebox\relax<\pucv@titleavail
+    \pucv@titlefitstrue
+  \fi
+}
+
+% El bloque de texto se ubica bajo el escudo y a la izquierda de la imagen de
+% portada; \maketitle lo compone en una diapositiva alineada arriba.
+\defbeamertemplate*{title page}{pucv}{%
+  \setlength{\pucv@titleavail}{\dimexpr\textheight-2.2cm\relax}%
+  \pucv@titlefitsfalse
+  \@for\pucv@layout:=\pucv@titlelayouts\do{%
+    \ifpucv@titlefits\else
+      \expandafter\pucv@trytitlelayout\pucv@layout
+    \fi
+  }%
+  % La imagen comienza donde termina el texto (sobre la parte opaca del velo),
+  % pero nunca antes de la mitad de la diapositiva. El fondo se dibuja al
+  % generar la página, después de esta plantilla; por eso la asignación es
+  % global.
+  \global\pucv@coverx=\dimexpr\beamer@leftmargin+\pucv@titlewd-0.8cm\relax
+  \ifdim\pucv@coverx<0.5\paperwidth
+    \global\pucv@coverx=0.5\paperwidth
+  \fi
+  \vspace*{2cm}%
+  \vskip0pt plus 1fill
+  \ifpucv@titlefits
+    \usebox{\pucv@titlebox}%
+  \else
+    \resizebox*{!}{\pucv@titleavail}{\usebox{\pucv@titlebox}}%
+  \fi
+}
+
+%% ---------------------------------------------------------------------------
+%% Separador de sección
+%% ---------------------------------------------------------------------------
+\defbeamertemplate*{section page}{pucv}{%
+  \begin{minipage}{0.8\textwidth}
+    \raggedright
+    {\usebeamercolor[fg]{section number}\usebeamerfont{section number}%
+      \pucv@twodigits{\c@section}\par}
+    \vskip0.4em
+    {\usebeamercolor[fg]{section title}\usebeamerfont{section title}%
+      \insertsectionhead\par}
+    \vskip1.2em
+    \pucv@accentrule\par
+  \end{minipage}
+}
+
+%% ---------------------------------------------------------------------------
+%% Listas
+%% ---------------------------------------------------------------------------
+\setbeamertemplate{itemize item}{%
+  \usebeamercolor[fg]{item}\raisebox{0.22em}{\tikz\fill (0,0) circle (0.22em);}}
+\setbeamertemplate{itemize subitem}{%
+  \usebeamercolor[fg]{subitem}\raisebox{0.24em}{\tikz\fill (0,0) rectangle (0.5em,0.1em);}}
+\setbeamertemplate{itemize subsubitem}{%
+  \usebeamercolor[fg]{subsubitem}\raisebox{0.24em}{\tikz\draw[line width=0.08em] (0,0) circle (0.18em);}}
+
+\setbeamertemplate{enumerate item}{%
+  \usebeamercolor[fg]{enumerate item}\usebeamerfont*{enumerate item}\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{%
+  \usebeamercolor[fg]{enumerate item}\usebeamerfont*{enumerate item}%
+  \insertenumlabel.\insertsubenumlabel}
+\setbeamertemplate{enumerate subsubitem}{%
+  \usebeamercolor[fg]{enumerate item}\usebeamerfont*{enumerate item}%
+  \insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+
+\setbeamertemplate{description item}{%
+  \usebeamercolor[fg]{item}\bfseries\insertdescriptionitem}
+
+%% ---------------------------------------------------------------------------
+%% Índice
+%% ---------------------------------------------------------------------------
+\setbeamertemplate{section in toc}{%
+  \leavevmode
+  {\usebeamercolor[fg]{section number}\bfseries
+    \pucv@twodigits{\inserttocsectionnumber}}%
+  \hspace{0.8em}\inserttocsection\par}
+\setbeamertemplate{subsection in toc}{%
+  \leavevmode\hspace{2.4em}{\small\inserttocsubsection}\par}
+
+%% ---------------------------------------------------------------------------
+%% Bloques, leyendas y bibliografía
+%% ---------------------------------------------------------------------------
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{.\ }
+\setbeamertemplate{bibliography item}[text]
+\setbeamertemplate{theorems}[numbered]
+
+\mode<all>
+
+\endinput

@@ -1,0 +1,147 @@
+% Presentación de ejemplo del tema beamer PUCV.
+%
+% Desde la raíz del repositorio, compile con `make' (versiones clara y oscura)
+% o directamente con `latexmk examples/presentacion.tex'.
+
+% Proporción de la página (16:9 por defecto); `make examples' la cambia a 4:3.
+\providecommand*{\proporcion}{169}
+\documentclass[11pt,aspectratio=\proporcion]{beamer}
+
+% `es-noshorthands' evita conflictos entre los atajos del español y las
+% especificaciones de overlays de beamer (<2->, etc.).
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{appendixnumberbeamer}
+
+\usetheme{PUCV}
+% Opciones, por ejemplo: \usetheme[mode=dark, accent=red, progressbar=head]{PUCV}
+
+\title{Tema beamer PUCV para presentaciones académicas}
+\subtitle{Una plantilla moderna para charlas y clases}
+\author[H.~Mella]{Hernán Mella}
+\institute{Escuela de Ingeniería Eléctrica\\
+  Pontificia Universidad Católica de Valparaíso}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Contenidos}
+  \tableofcontents
+\end{frame}
+
+\section{Primeros pasos}
+
+\begin{frame}{Listas}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Diseño limpio y minimalista
+        \item Colores y fuente institucionales
+          \begin{itemize}
+            \item Tipografía Roboto
+            \item Paleta PUCV
+          \end{itemize}
+        \item Modos claro y oscuro
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{enumerate}
+        \item Instale el tema
+        \item Cárguelo con \texttt{\textbackslash usetheme\{PUCV\}}
+          \begin{enumerate}
+            \item Elija un modo
+            \item Elija un color de acento
+          \end{enumerate}
+        \item Escriba su presentación
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Bloques}{Variantes normal, de alerta y de ejemplo}
+  \begin{block}{Definición}
+    Un \alert{bloque} destaca un contenido importante.
+  \end{block}
+  \begin{alertblock}{Advertencia}
+    Los bloques de alerta llaman la atención sobre precauciones.
+  \end{alertblock}
+  \begin{exampleblock}{Ejemplo}
+    Los bloques de ejemplo muestran \structure{casos resueltos}.
+  \end{exampleblock}
+\end{frame}
+
+\section{Contenido}
+
+\begin{frame}{Matemáticas}
+  La transformada de Fourier en tiempo discreto de una secuencia \(x[n]\) es
+  \begin{equation}
+    X(e^{j\omega}) = \sum_{n=-\infty}^{\infty} x[n]\, e^{-j\omega n},
+  \end{equation}
+  y las ecuaciones de Maxwell en forma diferencial son
+  \begin{align}
+    \nabla \cdot \mathbf{E} &= \frac{\rho}{\varepsilon_0}, &
+    \nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t}.
+  \end{align}
+  \begin{theorem}[Parseval]
+    \(\sum_n |x[n]|^2 = \frac{1}{2\pi}\int_{-\pi}^{\pi} |X(e^{j\omega})|^2\,d\omega\).
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{Tablas y figuras}
+  \begin{columns}[c]
+    \begin{column}{0.6\textwidth}
+      \begin{table}
+        \centering
+        \begin{tabular}{lrr}
+          \toprule
+          Método & Error (\%) & Tiempo (s) \\
+          \midrule
+          Referencia & 12.4 & 0.8 \\
+          Propuesto & \textbf{7.9} & 1.1 \\
+          \bottomrule
+        \end{tabular}
+        \caption{Comparación de métodos.}
+      \end{table}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[height=3cm]{beamerthemePUCV-logo}
+        \caption{Escudo de la PUCV.}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Overlays}
+  \setbeamercovered{transparent}
+  \begin{itemize}
+    \item<1-> Primer punto
+    \item<2-> Segundo punto, que aparece en la siguiente diapositiva
+    \item<3-> Tercer punto, con una \alert<3>{alerta en el paso 3}
+  \end{itemize}
+\end{frame}
+
+\section{Conclusiones}
+
+\begin{frame}{Resumen}
+  \begin{itemize}
+    \item Configure el tema con \texttt{\textbackslash usetheme[<clave>=<valor>]\{PUCV\}}
+    \item Use \texttt{mode=dark} para una presentación oscura
+    \item Los separadores de sección se agregan automáticamente
+  \end{itemize}
+  \vfill
+  \centering
+  {\usebeamerfont{frametitle}\usebeamercolor[fg]{structure}¡Muchas gracias!}
+\end{frame}
+
+\appendix
+
+\begin{frame}{Diapositiva de respaldo}
+  Las diapositivas después de \texttt{\textbackslash appendix} no cuentan en el total.
+\end{frame}
+
+\end{document}

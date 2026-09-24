@@ -1,0 +1,88 @@
+# Makefile del tema beamer PUCV.
+#
+#   make             Compila la presentación de ejemplo (claro y oscuro, 16:9)
+#   make examples    Compila todas las variantes del ejemplo (también 4:3)
+#   make test        Compila las pruebas de estrés y falla ante cajas desbordadas
+#   make covers      Regenera las imágenes de portada desde assets/ (ImageMagick)
+#   make install     Instala el tema en TEXMFHOME
+#   make uninstall   Elimina el tema de TEXMFHOME
+#   make clean       Elimina los archivos generados
+
+SHELL      := /bin/bash
+LATEXMK    ?= latexmk
+MAGICK     ?= magick
+TEXMFHOME  ?= $(shell kpsewhich -var-value=TEXMFHOME)
+INSTALLDIR := $(TEXMFHOME)/tex/latex/beamertheme-pucv
+
+THEME   := $(wildcard src/*.sty) $(wildcard src/*.png) $(wildcard src/*.jpg)
+EXAMPLE := examples/presentacion.tex
+OUTDIR  := examples/build
+
+# Recoloreado del dibujo de la Casa Central. El fondo oscuro debe coincidir con
+# pucv-bg en beamercolorthemePUCV.sty.
+COVER_SRC   := assets/casa-central-sketch-straight.jpg
+COVER_CROP  := 1560x1388+480+0
+COVER_LIGHT := '\#1d3a5f,white'
+COVER_DARK  := '\#8ea4bf,\#101824'
+# Recorta, amplía 1.5x y enfoca los trazos de tinta; luego aumenta el contraste
+# para que el papel quede blanco puro antes de recolorear.
+COVER_PROCESS := -crop $(COVER_CROP) +repage -colorspace gray \
+  -filter Lanczos -resize 150% -unsharp 0x3+1.5+0.01 -level 10%,78% \
+  -white-threshold 97%
+
+# Llamada a latexmk: $(call build,<nombre>,<opciones del tema>,<proporción>)
+define build
+	$(LATEXMK) -interaction=nonstopmode -halt-on-error -outdir=$(OUTDIR) -jobname=$(1) \
+	  -usepretex='\PassOptionsToPackage{$(2)}{beamerthemePUCV}\def\proporcion{$(3)}' \
+	  $(EXAMPLE)
+endef
+
+.PHONY: all examples test covers install uninstall clean
+
+all: $(OUTDIR)/presentacion-claro.pdf $(OUTDIR)/presentacion-oscuro.pdf
+
+examples: all $(OUTDIR)/presentacion-claro-43.pdf $(OUTDIR)/presentacion-oscuro-43.pdf
+
+$(OUTDIR)/presentacion-claro.pdf: $(EXAMPLE) $(THEME)
+	$(call build,presentacion-claro,mode=light,169)
+
+$(OUTDIR)/presentacion-oscuro.pdf: $(EXAMPLE) $(THEME)
+	$(call build,presentacion-oscuro,mode=dark,169)
+
+$(OUTDIR)/presentacion-claro-43.pdf: $(EXAMPLE) $(THEME)
+	$(call build,presentacion-claro-43,mode=light,43)
+
+$(OUTDIR)/presentacion-oscuro-43.pdf: $(EXAMPLE) $(THEME)
+	$(call build,presentacion-oscuro-43,mode=dark,43)
+
+# Pruebas de estrés: cada archivo de tests/ (salvo el cuerpo común) se compila
+# en modo claro y oscuro, en 16:9 y 4:3.
+TESTS := $(filter-out tests/cuerpo.tex,$(wildcard tests/*.tex))
+
+test:
+	@set -e; for t in $(TESTS); do for m in light dark; do for a in 169 43; do \
+	  j=$$(basename $$t .tex)-$$m-$$a; \
+	  $(LATEXMK) -interaction=nonstopmode -halt-on-error -silent -outdir=tests/build \
+	    -jobname=$$j -usepretex="\\def\\modo{$$m}\\def\\proporcion{$$a}" $$t \
+	    >/dev/null || { echo "FALLA $$j (error de compilación)"; exit 1; }; \
+	  if grep -aq 'Overfull' tests/build/$$j.log; then \
+	    echo "FALLA $$j (caja desbordada)"; exit 1; fi; \
+	  echo "ok    $$j"; \
+	done; done; done
+
+covers: $(COVER_SRC)
+	$(MAGICK) $< $(COVER_PROCESS) +level-colors $(COVER_LIGHT) -strip -quality 90 \
+	  src/beamerthemePUCV-cover-light.jpg
+	$(MAGICK) $< $(COVER_PROCESS) +level-colors $(COVER_DARK) -strip -quality 90 \
+	  src/beamerthemePUCV-cover-dark.jpg
+
+install:
+	install -d "$(INSTALLDIR)"
+	install -m 644 $(THEME) "$(INSTALLDIR)"
+	-mktexlsr "$(TEXMFHOME)" >/dev/null 2>&1
+
+uninstall:
+	rm -rf "$(INSTALLDIR)"
+
+clean:
+	rm -rf $(OUTDIR) tests/build

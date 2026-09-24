@@ -1,5 +1,6 @@
+# Archivos generados por LaTeX
 *.aux
-*.fdb_*
+*.fdb_latexmk
 *.fls
 *.log
 *.nav
@@ -7,4 +8,10 @@
 *.snm
 *.synctex.gz
 *.toc
-presentation.pdf
+*.vrb
+*.xdv
+
+# Compilaciones de ejemplos y pruebas
+examples/build/
+examples/*.pdf
+tests/build/

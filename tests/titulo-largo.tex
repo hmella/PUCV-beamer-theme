@@ -1,0 +1,12 @@
+% Prueba de estrés del tema beamer PUCV; ejecútela con `make test`.
+\providecommand*{\proporcion}{169}
+\providecommand*{\modo}{light}
+\documentclass[aspectratio=\proporcion]{beamer}
+\usepackage[spanish,es-noshorthands]{babel}
+\usetheme[mode=\modo]{PUCV}
+% Título y subtítulo largos, tres autores.
+\title{Redes neuronales informadas por la física para la reconstrucción de la deformación cardíaca a partir de datos de resonancia magnética submuestreados}
+\subtitle{Una comparación con técnicas convencionales de seguimiento de movimiento}
+\author{Hernán Mella, Juan Pérez, María González}
+\institute{Escuela de Ingeniería Eléctrica\\Pontificia Universidad Católica de Valparaíso}
+\input{tests/cuerpo}

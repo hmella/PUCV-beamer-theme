@@ -1,0 +1,13 @@
+% Prueba de estrés del tema beamer PUCV; ejecútela con `make test`.
+\providecommand*{\proporcion}{169}
+\providecommand*{\modo}{light}
+\documentclass[aspectratio=\proporcion]{beamer}
+\usepackage[spanish,es-noshorthands]{babel}
+\usetheme[mode=\modo]{PUCV}
+% Caso extremo: título y subtítulo muy largos, ocho autores, instituciones
+% largas y sin versiones cortas de autor ni título.
+\title{Redes neuronales informadas por la física para la reconstrucción de campos tridimensionales de deformación cardíaca a partir de datos de resonancia magnética cine y de marcado altamente submuestreados}
+\subtitle{Una comparación exhaustiva con técnicas convencionales de seguimiento de movimiento en voluntarios sanos y pacientes}
+\author{Hernán Mella \and Juan Pérez \and María González \and Pedro Soto \and Ana Rojas \and Luis Fernández \and Carla Muñoz \and Diego Torres}
+\institute{Escuela de Ingeniería Eléctrica, Pontificia Universidad Católica de Valparaíso\\ Departamento de Ingeniería Biomédica, Universidad de Chile\\ Núcleo Milenio de Resonancia Magnética Cardiovascular}
+\input{tests/cuerpo}

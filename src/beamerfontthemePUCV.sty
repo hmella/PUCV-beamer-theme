@@ -1,0 +1,45 @@
+%% beamerfontthemePUCV.sty
+%% Tema de fuentes del tema beamer PUCV: Roboto, la fuente institucional de la
+%% PUCV.
+%%
+%% Copyright 2023-2026 Hernán Mella
+%%
+%% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
+%% Consulte el archivo LICENSE para más detalles.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerfontthemePUCV}[2026/09/23 v2.0 Tema de fuentes beamer PUCV]
+
+\RequirePackage{iftex}
+
+\mode<presentation>
+
+% El paquete roboto elige por sí mismo fontspec (LuaLaTeX/XeLaTeX) o fuentes
+% Type 1 (pdfLaTeX); la codificación T1 solo tiene sentido en pdfLaTeX.
+\ifPDFTeX
+  \RequirePackage[T1]{fontenc}
+\fi
+\RequirePackage[sfdefault]{roboto}
+
+\setbeamerfont{title}{size=\LARGE, series=\bfseries}
+\setbeamerfont{subtitle}{size=\large, series=\mdseries}
+\setbeamerfont{author}{size=\normalsize, series=\bfseries}
+\setbeamerfont{institute}{size=\small}
+\setbeamerfont{date}{size=\small}
+
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\small, series=\mdseries}
+
+\setbeamerfont{section title}{size=\huge, series=\bfseries}
+\setbeamerfont{section number}{size=\Huge, series=\bfseries}
+
+\setbeamerfont{block title}{size=\normalsize, series=\bfseries}
+\setbeamerfont{footline}{size=\tiny}
+\setbeamerfont{page number in head/foot}{size=\tiny}
+\setbeamerfont{caption}{size=\small}
+\setbeamerfont{caption name}{series=\bfseries}
+\setbeamerfont{section in toc}{series=\bfseries}
+\setbeamerfont{enumerate item}{series=\bfseries}
+
+\mode<all>
+
+\endinput

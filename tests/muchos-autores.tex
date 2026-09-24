@@ -1,0 +1,11 @@
+% Prueba de estrés del tema beamer PUCV; ejecútela con `make test`.
+\providecommand*{\proporcion}{169}
+\providecommand*{\modo}{light}
+\documentclass[aspectratio=\proporcion]{beamer}
+\usepackage[spanish,es-noshorthands]{babel}
+\usetheme[mode=\modo]{PUCV}
+% Siete autores con \and, marcas \inst{} y tres instituciones.
+\title{Redes neuronales informadas por la física para la reconstrucción de la deformación cardíaca a partir de datos de resonancia magnética submuestreados}
+\author[Mella et al.]{Hernán Mella\inst{1} \and Juan Pérez\inst{2} \and María González\inst{1} \and Pedro Soto\inst{3} \and Ana Rojas\inst{2} \and Luis Fernández\inst{1} \and Carla Muñoz\inst{3}}
+\institute{\inst{1}Escuela de Ingeniería Eléctrica, Pontificia Universidad Católica de Valparaíso\\ \inst{2}Departamento de Ingeniería Biomédica, Universidad de Chile\\ \inst{3}Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile}
+\input{tests/cuerpo}

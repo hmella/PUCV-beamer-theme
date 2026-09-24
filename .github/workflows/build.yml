@@ -1,0 +1,37 @@
+name: Compilar ejemplos
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-latex-extra texlive-fonts-extra texlive-lang-spanish \
+            texlive-luatex texlive-xetex
+
+      - name: Compilar ejemplos claro y oscuro (16:9 y 4:3)
+        run: make examples
+
+      - name: Pruebas de estrés
+        run: make test
+
+      - name: Probar otros motores
+        run: |
+          latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+            -outdir=examples/build -jobname=presentacion-lualatex examples/presentacion.tex
+          latexmk -xelatex -interaction=nonstopmode -halt-on-error \
+            -outdir=examples/build -jobname=presentacion-xelatex examples/presentacion.tex
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: presentaciones-de-ejemplo
+          path: examples/build/*.pdf
