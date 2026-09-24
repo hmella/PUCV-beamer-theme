@@ -129,26 +129,35 @@
 %% Título de diapositiva
 %% ---------------------------------------------------------------------------
 % Título alineado a la izquierda seguido de una línea fina con un tramo corto
-% de acento.
+% de acento. La línea se coloca con \nointerlineskip, de modo que su distancia
+% al título depende solo de \pucv@ruleskip (y no del interlineado del título).
+\newlength{\pucv@titletop}
+\newlength{\pucv@ruleskip}
+\setlength{\pucv@titletop}{0.3cm}
+\setlength{\pucv@ruleskip}{0.4em}
+
 \defbeamertemplate*{frametitle}{pucv}{%
   \nointerlineskip
-  \vskip0.45cm
+  \vskip\pucv@titletop
   \begin{beamercolorbox}[wd=\paperwidth,
       leftskip=\beamer@leftmargin, rightskip=\beamer@rightmargin]{frametitle}%
-    \usebeamerfont{frametitle}\strut\insertframetitle\par
+    \usebeamerfont{frametitle}\strut\insertframetitle\strut\par
     \ifx\insertframesubtitle\@empty\else
       {\usebeamercolor[fg]{framesubtitle}\usebeamerfont{framesubtitle}%
-        \insertframesubtitle\par}%
+        \strut\insertframesubtitle\strut\par}%
     \fi
-    \vskip0.35em
+    \nointerlineskip
+    \vskip\pucv@ruleskip
     \usebeamercolor{title rule}%
-    \begin{tikzpicture}
-      \useasboundingbox (0,0) rectangle
-        (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,1.2pt);
-      \fill[title rule.bg] (0,0) rectangle
-        (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,0.5pt);
-      \fill[title rule.fg] (0,0) rectangle (2.5em,1.2pt);
-    \end{tikzpicture}%
+    \hbox{%
+      \hskip\beamer@leftmargin
+      \begin{tikzpicture}
+        \useasboundingbox (0,0) rectangle
+          (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,1.2pt);
+        \fill[title rule.bg] (0,0) rectangle
+          (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,0.5pt);
+        \fill[title rule.fg] (0,0) rectangle (2.5em,1.2pt);
+      \end{tikzpicture}}%
   \end{beamercolorbox}%
   \vskip0.2em
 }
