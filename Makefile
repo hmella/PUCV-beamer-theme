@@ -4,6 +4,7 @@
 #   make examples    Compila todas las variantes del ejemplo (también 4:3)
 #   make test        Compila las pruebas de estrés y falla ante cajas desbordadas
 #   make covers      Regenera las imágenes de portada desde assets/ (ImageMagick)
+#   make logos       Regenera los logos de la portada (claro y oscuro)
 #   make install     Instala el tema en TEXMFHOME
 #   make uninstall   Elimina el tema de TEXMFHOME
 #   make clean       Elimina los archivos generados
@@ -25,8 +26,11 @@ OUTDIR  := examples/build
 # pucv-bg en beamercolorthemePUCV.sty.
 COVER_SRC   := assets/casa-central-sketch-straight.jpg
 COVER_CROP  := 1560x1388+480+0
+# Tinta y fondo del modo oscuro: el logo usa la misma tinta que el dibujo.
+DARK_INK    := \#8ea4bf
+DARK_BG     := \#101824
 COVER_LIGHT := '\#1d3a5f,white'
-COVER_DARK  := '\#8ea4bf,\#101824'
+COVER_DARK  := '$(DARK_INK),$(DARK_BG)'
 # Recorta, amplía 1.5x y enfoca los trazos de tinta; luego aumenta el contraste
 # para que el papel quede blanco puro antes de recolorear.
 COVER_PROCESS := -crop $(COVER_CROP) +repage -colorspace gray \
@@ -40,7 +44,7 @@ define build
 	  $(EXAMPLE)
 endef
 
-.PHONY: all examples test covers install uninstall clean
+.PHONY: all examples test covers logos install uninstall clean
 
 all: $(OUTDIR)/presentacion-claro.pdf $(OUTDIR)/presentacion-oscuro.pdf
 
@@ -78,6 +82,21 @@ covers: $(COVER_SRC)
 	  src/beamerthemePUCV-cover-light.jpg
 	$(MAGICK) $< $(COVER_PROCESS) +level-colors $(COVER_DARK) -strip -quality 90 \
 	  src/beamerthemePUCV-cover-dark.jpg
+
+# Logos de la portada, a partir de las versiones oficiales horizontales:
+# a color para el modo claro y calado para el modo oscuro. El calado viene en
+# blanco sobre un rectángulo azul (rojo = 40); la opacidad se obtiene del canal
+# rojo y el logo se tiñe con la tinta del dibujo de la portada.
+LOGO_SRC_COLOR  := assets/logo-pucv-color-h.png
+LOGO_SRC_CALADO := assets/logo-pucv-calado-h.png
+
+logos: $(LOGO_SRC_COLOR) $(LOGO_SRC_CALADO)
+	$(MAGICK) $(LOGO_SRC_COLOR) -trim +repage -strip \
+	  -define png:compression-level=9 src/beamerthemePUCV-logo-light.png
+	$(MAGICK) $(LOGO_SRC_CALADO) -alpha off -channel R -separate +channel \
+	  -level 15.69%,100% \( +clone -fill '$(DARK_INK)' -colorize 100 \) \
+	  +swap -alpha off -compose CopyOpacity -composite -trim +repage -strip \
+	  -define png:compression-level=9 src/beamerthemePUCV-logo-dark.png
 
 install:
 	@if [ -d "$(LEGACYDIR)" ]; then \

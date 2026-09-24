@@ -21,7 +21,13 @@
 %% ---------------------------------------------------------------------------
 %% Recursos y utilidades
 %% ---------------------------------------------------------------------------
-\def\pucv@logo{beamerthemePUCV-logo}
+% Logo oficial horizontal de la portada: a color en modo claro y calado, con
+% la tinta del dibujo de la portada, en modo oscuro.
+\ifpucv@dark
+  \def\pucv@logo{beamerthemePUCV-logo-dark}
+\else
+  \def\pucv@logo{beamerthemePUCV-logo-light}
+\fi
 \def\pucv@none{none}
 \def\pucv@default{default}
 
@@ -74,20 +80,13 @@
   \fi
 }
 
-% Disco claro difuminado detrás del escudo en modo oscuro: blanco sólido sobre
-% la parte circular del escudo y luego un degradado hacia el fondo. El
-% sombreado se dibuja a su tamaño natural (radio 0.95cm), por lo que las
-% esquinas de su cuadrado son del color pucv-bg.
-\pgfdeclareradialshading{pucv crest glow}{\pgfpoint{0cm}{0cm}}{%
-  color(0cm)=(white); color(0.82cm)=(white); color(0.95cm)=(pucv-bg)}
-
 % Degradado usado como velo entre el texto de la portada y la imagen.
 \tikzfading[name=pucv veil, left color=transparent!0, right color=transparent!100]
 
 %% ---------------------------------------------------------------------------
 %% Portada
 %% ---------------------------------------------------------------------------
-% Fondo a sangre de la portada (imagen, velo y escudo). Lo activa
+% Fondo a sangre de la portada (imagen, velo y logo). Lo activa
 % \maketitle, ver beamerthemePUCV.sty.
 \defbeamertemplate{background}{pucv title}{%
   \begin{tikzpicture}[inner sep=0pt]
@@ -107,13 +106,7 @@
       \fill[pucv-bg, path fading=pucv veil]
         (\pucv@coverx,0) rectangle ({\pucv@coverx+0.2\paperwidth},\paperheight);
     \fi
-    % Escudo, sobre un disco claro en modo oscuro para conservar sus colores.
-    % El disco se centra en la parte circular del escudo (57.7% de su altura)
-    % y se difumina hacia el fondo en su borde.
-    \ifpucv@dark
-      \node at (\beamer@leftmargin+0.633cm,\paperheight-1.466cm)
-        {\pgfuseshading{pucv crest glow}};
-    \fi
+    % Logo institucional.
     \node[anchor=north west] at (\beamer@leftmargin,\paperheight-0.6cm)
       {\includegraphics[height=1.5cm]{\pucv@logo}};
   \end{tikzpicture}%
@@ -146,7 +139,7 @@
 }
 
 % Distribuciones que se prueban en orden hasta que el bloque de texto cabe bajo
-% el escudo, con la forma {ancho del texto}{tamaño del título}{tamaño del
+% el logo, con la forma {ancho del texto}{tamaño del título}{tamaño del
 % subtítulo}: primero un título más pequeño y luego una columna de texto más
 % ancha (la imagen se desplaza a la derecha). Si ninguna cabe, el bloque de la
 % última distribución se reduce completo.
@@ -168,10 +161,10 @@
   \fi
 }
 
-% El bloque de texto se ubica bajo el escudo y a la izquierda de la imagen de
+% El bloque de texto se ubica bajo el logo y a la izquierda de la imagen de
 % portada; \maketitle lo compone en una diapositiva alineada arriba.
 \defbeamertemplate*{title page}{pucv}{%
-  \setlength{\pucv@titleavail}{\dimexpr\textheight-2.2cm\relax}%
+  \setlength{\pucv@titleavail}{\dimexpr\textheight-2.5cm\relax}%
   \pucv@titlefitsfalse
   \@for\pucv@layout:=\pucv@titlelayouts\do{%
     \ifpucv@titlefits\else
@@ -186,7 +179,7 @@
   \ifdim\pucv@coverx<0.5\paperwidth
     \global\pucv@coverx=0.5\paperwidth
   \fi
-  \vspace*{2cm}%
+  \vspace*{2.3cm}%
   \vskip0pt plus 1fill
   \ifpucv@titlefits
     \usebox{\pucv@titlebox}%

@@ -48,6 +48,10 @@ atajos del español interfieren con las especificaciones de overlays de beamer
 (`<2->`, etc.). El tema traduce al español los nombres de los entornos de
 beamer (Teorema, Definición, Ejemplo, Demostración, etc.).
 
+La portada usa el logo oficial horizontal de la PUCV: a color en modo claro y
+en su versión calada en modo oscuro, teñida con el mismo tono de las líneas
+del dibujo de la Casa Central.
+
 ### Títulos largos y muchos autores
 
 - La portada se adapta a su contenido: primero reduce el tamaño del título,
@@ -90,7 +94,7 @@ tanto en modo claro como oscuro.
 | `src/beamerfontthemePUCV.sty`  | Roboto y jerarquía tipográfica.                            |
 | `src/beamerinnerthemePUCV.sty` | Portada, separadores de sección, listas, bloques e índice. |
 | `src/beamerouterthemePUCV.sty` | Título de diapositiva, pie de página y barra de progreso.  |
-| `assets/`                      | Dibujo original de las imágenes de portada (`make covers`). |
+| `assets/`                      | Dibujo de la portada y logos oficiales originales (`make covers`, `make logos`). |
 | `examples/`                    | Presentación de ejemplo.                                   |
 | `tests/`                       | Pruebas de estrés (títulos largos, muchos autores).        |
 
@@ -101,6 +105,7 @@ make            # compila examples/build/presentacion-{claro,oscuro}.pdf
 make examples   # compila también las variantes 4:3
 make test       # pruebas de estrés en modo claro/oscuro, 16:9 y 4:3
 make covers     # regenera las imágenes de portada (requiere ImageMagick)
+make logos      # regenera los logos de la portada desde assets/ (requiere ImageMagick)
 make clean
 ```
 
