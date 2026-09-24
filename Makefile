@@ -13,6 +13,9 @@ LATEXMK    ?= latexmk
 MAGICK     ?= magick
 TEXMFHOME  ?= $(shell kpsewhich -var-value=TEXMFHOME)
 INSTALLDIR := $(TEXMFHOME)/tex/latex/beamertheme-pucv
+# Carpeta usada por la versión 1 del tema; se elimina al instalar porque sus
+# archivos tienen los mismos nombres y TeX podría seguir usándolos.
+LEGACYDIR  := $(TEXMFHOME)/tex/latex/PUCV
 
 THEME   := $(wildcard src/*.sty) $(wildcard src/*.png) $(wildcard src/*.jpg)
 EXAMPLE := examples/presentacion.tex
@@ -77,12 +80,17 @@ covers: $(COVER_SRC)
 	  src/beamerthemePUCV-cover-dark.jpg
 
 install:
+	@if [ -d "$(LEGACYDIR)" ]; then \
+	  echo "Eliminando la instalación de la versión 1 en $(LEGACYDIR)"; \
+	  rm -rf "$(LEGACYDIR)"; \
+	fi
 	install -d "$(INSTALLDIR)"
 	install -m 644 $(THEME) "$(INSTALLDIR)"
 	-mktexlsr "$(TEXMFHOME)" >/dev/null 2>&1
 
 uninstall:
-	rm -rf "$(INSTALLDIR)"
+	rm -rf "$(INSTALLDIR)" "$(LEGACYDIR)"
+	-mktexlsr "$(TEXMFHOME)" >/dev/null 2>&1
 
 clean:
 	rm -rf $(OUTDIR) tests/build
