@@ -19,6 +19,12 @@
 
 \setbeamersize{text margin left=0.9cm, text margin right=0.9cm}
 
+% Margen del marco de la diapositiva (título, línea bajo el título y pie de
+% página). Es menor que el margen del texto, de modo que el contenido queda
+% levemente sangrado respecto del encabezado y del pie.
+\newlength{\pucv@framemargin}
+\setlength{\pucv@framemargin}{0.6cm}
+
 \newlength{\pucv@progress}
 \newlength{\pucv@barht}
 \setlength{\pucv@barht}{2pt}
@@ -110,10 +116,10 @@
 
 \defbeamertemplate*{footline}{pucv}{%
   \begin{beamercolorbox}[wd=\paperwidth, ht=2.5ex, dp=1.8ex,
-      leftskip=\beamer@leftmargin, rightskip=\beamer@rightmargin]{footline}%
+      leftskip=\pucv@framemargin, rightskip=\pucv@framemargin]{footline}%
     \usebeamerfont{footline}%
     \setlength{\pucv@footlinewd}{%
-      \dimexpr\paperwidth-\beamer@leftmargin-\beamer@rightmargin-1.5cm\relax}%
+      \dimexpr\paperwidth-2\pucv@framemargin-1.5cm\relax}%
     \pucv@footlinetext\hfill
     {\usebeamercolor[fg]{page number in head/foot}%
      \usebeamerfont{page number in head/foot}%
@@ -140,7 +146,7 @@
   \nointerlineskip
   \vskip\pucv@titletop
   \begin{beamercolorbox}[wd=\paperwidth,
-      leftskip=\beamer@leftmargin, rightskip=\beamer@rightmargin]{frametitle}%
+      leftskip=\pucv@framemargin, rightskip=\pucv@framemargin]{frametitle}%
     \usebeamerfont{frametitle}\strut\insertframetitle\strut\par
     \ifx\insertframesubtitle\@empty\else
       {\usebeamercolor[fg]{framesubtitle}\usebeamerfont{framesubtitle}%
@@ -150,12 +156,10 @@
     \vskip\pucv@ruleskip
     \usebeamercolor{title rule}%
     \hbox{%
-      \hskip\beamer@leftmargin
+      \hskip\pucv@framemargin
       \begin{tikzpicture}
-        \useasboundingbox (0,0) rectangle
-          (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,1.2pt);
-        \fill[title rule.bg] (0,0) rectangle
-          (\paperwidth-\beamer@leftmargin-\beamer@rightmargin,0.5pt);
+        \useasboundingbox (0,0) rectangle (\paperwidth-2\pucv@framemargin,1.2pt);
+        \fill[title rule.bg] (0,0) rectangle (\paperwidth-2\pucv@framemargin,0.5pt);
         \fill[title rule.fg] (0,0) rectangle (2.5em,1.2pt);
       \end{tikzpicture}}%
   \end{beamercolorbox}%
