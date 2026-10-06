@@ -13,14 +13,33 @@
 
 \mode<presentation>
 
-% El paquete roboto elige por sí mismo fontspec (LuaLaTeX/XeLaTeX) o fuentes
-% Type 1 (pdfLaTeX); la codificación T1 solo tiene sentido en pdfLaTeX.
+% Roboto para el texto y Roboto Mono para \texttt y el código (legible y
+% coherente con el texto). En pdfLaTeX se usan los paquetes roboto y
+% roboto-mono (fuentes Type 1, codificación T1). En LuaLaTeX y XeLaTeX las
+% fuentes OpenType se cargan directamente con fontspec: el paquete roboto
+% exige además Roboto Slab, que no viene en algunas distribuciones (p. ej.
+% TeX Live de Debian/Ubuntu) y que el tema no usa.
 \ifPDFTeX
   \RequirePackage[T1]{fontenc}
+  \RequirePackage[sfdefault]{roboto}
+  \RequirePackage{roboto-mono}
+\else
+  \RequirePackage{fontspec}
+  \setsansfont{Roboto}[
+    Extension      = .otf,
+    UprightFont    = *-Regular,
+    BoldFont       = *-Bold,
+    ItalicFont     = *-Italic,
+    BoldItalicFont = *-BoldItalic,
+    Ligatures      = TeX]
+  \setmonofont{RobotoMono}[
+    Extension      = .otf,
+    UprightFont    = *-Regular,
+    BoldFont       = *-Bold,
+    ItalicFont     = *-Italic,
+    BoldItalicFont = *-BoldItalic]
+  \renewcommand*{\familydefault}{\sfdefault}
 \fi
-\RequirePackage[sfdefault]{roboto}
-% Roboto Mono para \texttt y el código: legible y coherente con el texto.
-\RequirePackage{roboto-mono}
 
 \setbeamerfont{title}{size=\LARGE, series=\bfseries}
 \setbeamerfont{subtitle}{size=\large, series=\mdseries}

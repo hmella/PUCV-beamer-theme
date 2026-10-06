@@ -18,7 +18,7 @@ jobs:
             latexmk texlive-latex-extra texlive-fonts-extra texlive-lang-spanish \
             texlive-luatex texlive-xetex
 
-      - name: Compilar ejemplos claro y oscuro (16:9 y 4:3)
+      - name: Compilar ejemplos claro, oscuro e institucional (16:9 y 4:3)
         run: make examples
 
       - name: Pruebas de estrés

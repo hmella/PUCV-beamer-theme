@@ -15,3 +15,6 @@
 examples/build/
 examples/*.pdf
 tests/build/
+
+# Manuales de marca de la PUCV (referencia local, no se distribuyen)
+manuales/
