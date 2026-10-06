@@ -7,17 +7,21 @@
 %% Consulte el archivo LICENSE para más detalles.
 %%
 %% Los colores se organizan en dos capas:
-%%   1. Paleta institucional (pucv-blue, pucv-navy, pucv-red, pucv-gold,
-%%      pucv-gray), tomada de las normas gráficas de la PUCV.
+%%   1. Paleta institucional: los colores de la marca según las normas gráficas
+%%      2023 (pucv-blue, pucv-navy, pucv-red, pucv-gold, pucv-gray) y la paleta
+%%      del logo de los 100 años (pucv-c-*).
 %%   2. Roles semánticos (pucv-bg, pucv-fg, pucv-muted, pucv-rule, pucv-accent,
-%%      pucv-alert, pucv-example), que dependen del modo claro/oscuro.
+%%      pucv-alert, pucv-example, pucv-hero-*, pucv-section-*, ...), que
+%%      dependen del modo (claro, oscuro o institucional).
 %% Todos los colores de beamer se derivan solo de los roles semánticos, de modo
-%% que ambos modos comparten un único conjunto de definiciones.
+%% que los tres modos comparten un único conjunto de definiciones.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamercolorthemePUCV}[2026/09/23 v2.0 Tema de colores beamer PUCV]
+\ProvidesPackage{beamercolorthemePUCV}[2026/10/05 v2.1 Tema de colores beamer PUCV]
 
 % Valores de respaldo cuando el tema de colores se carga por separado.
 \@ifundefined{ifpucv@dark}{\newif\ifpucv@dark}{}
+\@ifundefined{ifpucv@institutional}{\newif\ifpucv@institutional}{}
+\@ifundefined{ifpucv@centenary}{\newif\ifpucv@centenary\pucv@centenarytrue}{}
 \providecommand*{\pucv@accent}{blue}
 
 \mode<presentation>
@@ -25,17 +29,32 @@
 %% ---------------------------------------------------------------------------
 %% Paleta institucional
 %% ---------------------------------------------------------------------------
+% Normas gráficas 2023: los tres colores de la marca (Pantone 2945 U, 1807 U y
+% 873 U, en aproximación RGB) más un azul brillante y un gris neutro.
 \definecolor{pucv-blue}{RGB}{0,110,182}
-\definecolor{pucv-navy}{RGB}{41,88,140}
+\definecolor{pucv-navy}{HTML}{24588D}
 \definecolor{pucv-red}{RGB}{167,81,84}
 \definecolor{pucv-gold}{RGB}{183,140,48}
 \definecolor{pucv-gray}{RGB}{78,74,71}
 
+% Logo de los 100 años (manual del Centenario, 2025): paleta y fondo crudo.
+\definecolor{pucv-c-navy}{HTML}{24588D}
+\definecolor{pucv-c-blue}{HTML}{1D71B8}
+\definecolor{pucv-c-cerulean}{HTML}{008CBA}
+\definecolor{pucv-c-sky}{HTML}{36A9E1}
+\definecolor{pucv-c-ice}{HTML}{A3D1E3}
+\definecolor{pucv-c-red}{HTML}{E73A34}
+\definecolor{pucv-c-coral}{HTML}{EE7269}
+\definecolor{pucv-c-violet}{HTML}{9366A9}
+\definecolor{pucv-c-yellow}{HTML}{F4CE46}
+\definecolor{pucv-c-teal}{HTML}{30B6BE}
+\definecolor{pucv-c-cream}{HTML}{ECE5E0}
+
 %% ---------------------------------------------------------------------------
 %% Roles semánticos
 %% ---------------------------------------------------------------------------
-% Variantes de cada color institucional aptas para texto (contraste >= 4.5:1
-% respecto de pucv-bg).
+% Variantes de cada color institucional aptas para texto: contraste >= 4.5:1
+% (WCAG AA) respecto de pucv-bg y de los fondos teñidos de los bloques.
 \ifpucv@dark
   \definecolor{pucv-bg}{RGB}{16,24,36}
   \definecolor{pucv-fg}{RGB}{230,234,240}
@@ -45,20 +64,41 @@
   \colorlet{pucv-text-gold}{pucv-gold!65!white}
 \else
   \definecolor{pucv-bg}{RGB}{255,255,255}
-  \colorlet{pucv-fg}{pucv-gray!80!black}
-  \colorlet{pucv-muted}{pucv-gray!85!white}
-  \colorlet{pucv-text-blue}{pucv-blue}
-  \colorlet{pucv-text-red}{pucv-red}
-  \colorlet{pucv-text-gold}{pucv-gold!70!black}
+  \ifpucv@institutional
+    \ifpucv@centenary
+      \definecolor{pucv-fg}{HTML}{22303F}
+      \definecolor{pucv-muted}{HTML}{56606D}
+      \colorlet{pucv-text-blue}{pucv-c-navy}
+      \colorlet{pucv-text-red}{pucv-c-red!75!black}
+      \colorlet{pucv-text-gold}{pucv-gold!70!black}
+    \else
+      \colorlet{pucv-fg}{pucv-gray!80!black}
+      \colorlet{pucv-muted}{pucv-gray!85!white}
+      \colorlet{pucv-text-blue}{pucv-navy}
+      \colorlet{pucv-text-red}{pucv-red}
+      \colorlet{pucv-text-gold}{pucv-gold!70!black}
+    \fi
+  \else
+    \colorlet{pucv-fg}{pucv-gray!80!black}
+    \colorlet{pucv-muted}{pucv-gray!85!white}
+    \colorlet{pucv-text-blue}{pucv-navy}
+    \colorlet{pucv-text-red}{pucv-red}
+    \colorlet{pucv-text-gold}{pucv-gold!70!black}
+  \fi
 \fi
 \colorlet{pucv-rule}{pucv-fg!15!pucv-bg}
 
 % Asignación del acento: los otros colores institucionales se usan para
-% alertas y ejemplos.
+% alertas y ejemplos. El tercer color es el oro, salvo en el modo
+% institucional del Centenario, donde es el teal de su paleta.
+\colorlet{pucv-text-third}{pucv-text-gold}
+\ifpucv@institutional\ifpucv@centenary
+  \colorlet{pucv-text-third}{pucv-c-teal!55!black}
+\fi\fi
 \def\pucv@tmp{red}
 \ifx\pucv@accent\pucv@tmp
   \colorlet{pucv-accent}{pucv-text-red}
-  \colorlet{pucv-alert}{pucv-text-gold}
+  \colorlet{pucv-alert}{pucv-text-third}
   \colorlet{pucv-example}{pucv-text-blue}
 \else
   \def\pucv@tmp{gold}
@@ -69,9 +109,48 @@
   \else
     \colorlet{pucv-accent}{pucv-text-blue}
     \colorlet{pucv-alert}{pucv-text-red}
-    \colorlet{pucv-example}{pucv-text-gold}
+    \colorlet{pucv-example}{pucv-text-third}
   \fi
 \fi
+
+% Títulos de diapositiva, superficies (encabezados de tabla, código) y
+% diapositivas a sangre: portada y cierre (hero) y separadores de sección.
+% En los modos claro y oscuro las diapositivas a sangre usan el fondo normal.
+\colorlet{pucv-title}{pucv-fg}
+\colorlet{pucv-surface}{pucv-accent!10!pucv-bg}
+\colorlet{pucv-code-bg}{pucv-fg!5!pucv-bg}
+\colorlet{pucv-hero-bg}{pucv-bg}
+\colorlet{pucv-hero-title}{pucv-fg}
+\colorlet{pucv-hero-fg}{pucv-fg}
+\colorlet{pucv-hero-muted}{pucv-muted}
+\colorlet{pucv-hero-accent}{pucv-accent}
+\colorlet{pucv-section-bg}{pucv-bg}
+\colorlet{pucv-section-fg}{pucv-fg}
+\colorlet{pucv-section-accent}{pucv-accent}
+\ifpucv@institutional
+  \colorlet{pucv-title}{pucv-text-blue}
+  \colorlet{pucv-section-bg}{pucv-navy}
+  \colorlet{pucv-section-fg}{white}
+  \ifpucv@centenary
+    % Portada y cierre sobre el fondo crudo del logo de los 100 años.
+    \colorlet{pucv-surface}{pucv-c-cream!55!pucv-bg}
+    \colorlet{pucv-code-bg}{pucv-c-cream!55!pucv-bg}
+    \colorlet{pucv-hero-bg}{pucv-c-cream}
+    \colorlet{pucv-hero-title}{pucv-c-navy}
+    \colorlet{pucv-hero-accent}{pucv-alert}
+    \colorlet{pucv-section-accent}{pucv-c-yellow}
+  \else
+    % Normas 2023: portada y cierre a sangre en azul institucional.
+    \colorlet{pucv-surface}{pucv-navy!8!pucv-bg}
+    \colorlet{pucv-hero-bg}{pucv-navy}
+    \colorlet{pucv-hero-title}{white}
+    \colorlet{pucv-hero-fg}{white}
+    \colorlet{pucv-hero-muted}{white!80!pucv-navy}
+    \colorlet{pucv-hero-accent}{pucv-gold!45!white}
+    \colorlet{pucv-section-accent}{pucv-gold!45!white}
+  \fi
+\fi
+\colorlet{pucv-table-head}{pucv-surface}
 
 %% ---------------------------------------------------------------------------
 %% Colores de beamer
@@ -83,17 +162,20 @@
 \setbeamercolor{background canvas}{bg=pucv-bg}
 
 % Títulos
-\setbeamercolor{titlelike}{fg=pucv-fg}
-\setbeamercolor{title}{fg=pucv-fg}
-\setbeamercolor{subtitle}{fg=pucv-accent}
-\setbeamercolor{author}{fg=pucv-fg}
-\setbeamercolor{institute}{fg=pucv-muted}
-\setbeamercolor{date}{fg=pucv-muted}
-\setbeamercolor{frametitle}{fg=pucv-fg}
+\setbeamercolor{titlelike}{fg=pucv-title}
+\setbeamercolor{title}{fg=pucv-hero-title}
+\setbeamercolor{subtitle}{fg=pucv-hero-accent}
+\setbeamercolor{author}{fg=pucv-hero-fg}
+\setbeamercolor{institute}{fg=pucv-hero-muted}
+\setbeamercolor{date}{fg=pucv-hero-muted}
+\setbeamercolor{frametitle}{fg=pucv-title}
 \setbeamercolor{framesubtitle}{fg=pucv-muted}
-\setbeamercolor{section title}{fg=pucv-fg}
-\setbeamercolor{section number}{fg=pucv-accent}
+\setbeamercolor{section title}{fg=pucv-section-fg}
+\setbeamercolor{section number}{fg=pucv-section-accent}
 \setbeamercolor{title rule}{fg=pucv-accent, bg=pucv-rule}
+\setbeamercolor{hero rule}{fg=pucv-hero-accent}
+\setbeamercolor{section rule}{fg=pucv-section-accent}
+\setbeamercolor{closing}{fg=pucv-hero-title, bg=pucv-hero-bg}
 
 % Encabezado y pie de página
 \setbeamercolor{footline}{fg=pucv-muted}
@@ -106,16 +188,28 @@
 \setbeamercolor{subsubitem}{fg=pucv-muted}
 \setbeamercolor{enumerate item}{fg=pucv-accent}
 \setbeamercolor{section in toc}{fg=pucv-fg}
+\setbeamercolor{section number in toc}{fg=pucv-accent}
 \setbeamercolor{subsection in toc}{fg=pucv-muted}
 \setbeamercolor{section number projected}{fg=pucv-bg, bg=pucv-accent}
 
-% Bloques: banda de título teñida y cuerpo más claro, derivados del color del rol.
-\setbeamercolor{block title}{fg=pucv-accent, bg=pucv-accent!10!pucv-bg}
-\setbeamercolor{block body}{fg=pucv-fg, bg=pucv-accent!4!pucv-bg}
-\setbeamercolor{block title alerted}{fg=pucv-alert, bg=pucv-alert!10!pucv-bg}
-\setbeamercolor{block body alerted}{fg=pucv-fg, bg=pucv-alert!4!pucv-bg}
-\setbeamercolor{block title example}{fg=pucv-example, bg=pucv-example!10!pucv-bg}
-\setbeamercolor{block body example}{fg=pucv-fg, bg=pucv-example!4!pucv-bg}
+% Bloques. En los modos claro y oscuro, banda de título teñida y cuerpo más
+% claro derivados del color del rol; en el modo institucional, banda sólida con
+% texto blanco y cuerpo sobre la superficie institucional.
+\ifpucv@institutional
+  \setbeamercolor{block title}{fg=white, bg=pucv-accent}
+  \setbeamercolor{block body}{fg=pucv-fg, bg=pucv-surface}
+  \setbeamercolor{block title alerted}{fg=white, bg=pucv-alert}
+  \setbeamercolor{block body alerted}{fg=pucv-fg, bg=pucv-surface}
+  \setbeamercolor{block title example}{fg=white, bg=pucv-example}
+  \setbeamercolor{block body example}{fg=pucv-fg, bg=pucv-surface}
+\else
+  \setbeamercolor{block title}{fg=pucv-accent, bg=pucv-accent!10!pucv-bg}
+  \setbeamercolor{block body}{fg=pucv-fg, bg=pucv-accent!4!pucv-bg}
+  \setbeamercolor{block title alerted}{fg=pucv-alert, bg=pucv-alert!10!pucv-bg}
+  \setbeamercolor{block body alerted}{fg=pucv-fg, bg=pucv-alert!4!pucv-bg}
+  \setbeamercolor{block title example}{fg=pucv-example, bg=pucv-example!10!pucv-bg}
+  \setbeamercolor{block body example}{fg=pucv-fg, bg=pucv-example!4!pucv-bg}
+\fi
 
 % Otros
 \setbeamercolor{caption name}{fg=pucv-accent}

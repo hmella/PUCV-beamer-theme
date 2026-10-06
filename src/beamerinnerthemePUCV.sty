@@ -1,19 +1,21 @@
 %% beamerinnerthemePUCV.sty
-%% Tema interno del tema beamer PUCV: portada, separadores de sección, listas,
-%% bloques e índice.
+%% Tema interno del tema beamer PUCV: portada, separadores de sección,
+%% diapositiva de cierre, listas, bloques, índice y código.
 %%
 %% Copyright 2023-2026 Hernán Mella
 %%
 %% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
 %% Consulte el archivo LICENSE para más detalles.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamerinnerthemePUCV}[2026/09/23 v2.0 Tema interno beamer PUCV]
+\ProvidesPackage{beamerinnerthemePUCV}[2026/10/05 v2.1 Tema interno beamer PUCV]
 
 \RequirePackage{tikz}
 \usetikzlibrary{fadings}
 
 % Valores de respaldo cuando el tema interno se carga por separado.
 \@ifundefined{ifpucv@dark}{\newif\ifpucv@dark}{}
+\@ifundefined{ifpucv@institutional}{\newif\ifpucv@institutional}{}
+\@ifundefined{ifpucv@centenary}{\newif\ifpucv@centenary\pucv@centenarytrue}{}
 \providecommand*{\pucv@titleimage}{default}
 
 \mode<presentation>
@@ -21,23 +23,50 @@
 %% ---------------------------------------------------------------------------
 %% Recursos y utilidades
 %% ---------------------------------------------------------------------------
-% Logo oficial horizontal de la portada: a color en modo claro y calado, con
-% la tinta del dibujo de la portada, en modo oscuro.
-\ifpucv@dark
-  \def\pucv@logo{beamerthemePUCV-logo-dark}
+% Logos oficiales horizontales de la portada y del cierre (\pucv@logo) y de los
+% separadores de sección (\pucv@sectionlogo, solo en el modo institucional).
+% Según las normas gráficas, el logo a color va sobre fondo blanco o crudo y,
+% sobre fondos oscuros o de color, en versión monocroma blanca:
+%   claro          logo a color
+%   oscuro         logo calado, con la tinta del dibujo de la portada
+%   institucional  logo de los 100 años a color (portada y cierre sobre crudo)
+%                  y blanco (separadores); con centenary=false, logo calado
+%                  blanco sobre azul
+\newif\ifpucv@gridcover
+\ifpucv@institutional
+  \ifpucv@centenary
+    \def\pucv@logo{beamerthemePUCV-centenario-logo}
+    \def\pucv@sectionlogo{beamerthemePUCV-centenario-logo-white}
+  \else
+    \def\pucv@logo{beamerthemePUCV-logo-white}
+    \def\pucv@sectionlogo{beamerthemePUCV-logo-white}
+  \fi
 \else
-  \def\pucv@logo{beamerthemePUCV-logo-light}
+  \ifpucv@dark
+    \def\pucv@logo{beamerthemePUCV-logo-dark}
+  \else
+    \def\pucv@logo{beamerthemePUCV-logo-light}
+  \fi
 \fi
 \def\pucv@none{none}
 \def\pucv@default{default}
 
 % Imagen de portada: `default' elige el dibujo de la Casa Central que
-% corresponde al modo actual y `none' desactiva la imagen.
+% corresponde al modo actual (o, en el modo institucional del Centenario, la
+% grilla del logo de los 100 años) y `none' desactiva la imagen.
 \ifx\pucv@titleimage\pucv@default
-  \ifpucv@dark
-    \def\pucv@titleimage{beamerthemePUCV-cover-dark}
+  \ifpucv@institutional
+    \ifpucv@centenary
+      \pucv@gridcovertrue
+    \else
+      \def\pucv@titleimage{beamerthemePUCV-cover-brand}
+    \fi
   \else
-    \def\pucv@titleimage{beamerthemePUCV-cover-light}
+    \ifpucv@dark
+      \def\pucv@titleimage{beamerthemePUCV-cover-dark}
+    \else
+      \def\pucv@titleimage{beamerthemePUCV-cover-light}
+    \fi
   \fi
 \fi
 
@@ -51,9 +80,31 @@
 % Números de dos dígitos para las secciones (01, 02, ...).
 \newcommand*{\pucv@twodigits}[1]{\ifnum#1<10 0\fi\number#1}
 
-% Línea corta de acento usada en la portada y en los separadores de sección.
-\newcommand*{\pucv@accentrule}{%
-  {\usebeamercolor[fg]{title rule}\rule{2.5em}{2pt}}%
+% Línea corta de acento usada en la portada, en los separadores de sección y en
+% el cierre; #1 es el color de beamer de la línea.
+\newcommand*{\pucv@accentrule}[1]{%
+  {\usebeamercolor[fg]{#1}\rule{2.5em}{2pt}}%
+}
+
+% Remates del modo institucional, dibujados dentro de un tikzpicture con
+% origen en la esquina inferior izquierda de la página:
+%   - franja de la grilla de los 100 años de altura #1, desde el borde
+%     izquierdo (como en la plantilla "Base PPT" del manual);
+%   - banda con los tres colores de la marca (oro, rojo y azul, en el orden de
+%     las normas gráficas) de altura #1, a todo el ancho.
+\newcommand*{\pucv@stripat}[1]{%
+  \node[anchor=south west, inner sep=0pt] at (0,0)
+    {\includegraphics[height=#1]{beamerthemePUCV-centenario-strip}};
+}
+\newcommand*{\pucv@tricolorat}[1]{%
+  \fill[pucv-gold] (0,0) rectangle ({\paperwidth/3},#1);
+  \fill[pucv-red] ({\paperwidth/3},0) rectangle ({2*\paperwidth/3},#1);
+  \fill[pucv-navy] ({2*\paperwidth/3},0) rectangle (\paperwidth,#1);
+}
+\newcommand*{\pucv@brandmark}[1]{%
+  \ifpucv@institutional
+    \ifpucv@centenary\pucv@stripat{#1}\else\pucv@tricolorat{0.12cm}\fi
+  \fi
 }
 
 \newsavebox{\pucv@coverbox}
@@ -86,12 +137,30 @@
 %% ---------------------------------------------------------------------------
 %% Portada
 %% ---------------------------------------------------------------------------
+% Columna de la grilla de los 100 años en el borde derecho de la portada, como
+% en la plantilla "Portada PPT" del manual del Centenario: una fila de la
+% grilla arriba, el logo en el centro y otra fila abajo. Mide dos tercios de
+% la altura de la página de ancho, salvo que el texto necesite más espacio; el
+% ancho \pucv@gridwd lo calcula la plantilla de portada.
+\newlength{\pucv@gridwd}
+\newcommand*{\pucv@gridcolumn}{%
+  \node[anchor=north east] at (\paperwidth,\paperheight)
+    {\includegraphics[width=\pucv@gridwd]{beamerthemePUCV-centenario-grid-top}};
+  \node[anchor=south east] at (\paperwidth,0)
+    {\includegraphics[width=\pucv@gridwd]{beamerthemePUCV-centenario-grid-bottom}};
+  \node at ({\paperwidth-0.5\pucv@gridwd},0.5\paperheight)
+    {\includegraphics[width=0.8\pucv@gridwd]{\pucv@logo}};
+}
+
 % Fondo a sangre de la portada (imagen, velo y logo). Lo activa
 % \maketitle, ver beamerthemePUCV.sty.
 \defbeamertemplate{background}{pucv title}{%
   \begin{tikzpicture}[inner sep=0pt]
     \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
-    \ifpucv@hastitleimage
+    \fill[pucv-hero-bg] (0,0) rectangle (\paperwidth,\paperheight);
+    \ifpucv@gridcover
+      \pucv@gridcolumn
+    \else\ifpucv@hastitleimage
       % Escala la imagen para cubrir el panel derecho y luego la recorta.
       \pucv@coverwd=\dimexpr\paperwidth-\pucv@coverx\relax
       \sbox{\pucv@coverbox}{\includegraphics[height=\paperheight]{\pucv@titleimage}}%
@@ -103,12 +172,15 @@
         \node at ({0.5*(\pucv@coverx+\paperwidth)},0.5\paperheight)
           {\usebox{\pucv@coverbox}};
       \end{scope}
-      \fill[pucv-bg, path fading=pucv veil]
+      \fill[pucv-hero-bg, path fading=pucv veil]
         (\pucv@coverx,0) rectangle ({\pucv@coverx+0.2\paperwidth},\paperheight);
+    \fi\fi
+    % Logo institucional (en la portada con grilla va dentro de la columna).
+    \ifpucv@gridcover\else
+      \node[anchor=north west] at (\beamer@leftmargin,\paperheight-0.6cm)
+        {\includegraphics[height=1.5cm]{\pucv@logo}};
+      \pucv@brandmark{0.45cm}
     \fi
-    % Logo institucional.
-    \node[anchor=north west] at (\beamer@leftmargin,\paperheight-0.6cm)
-      {\includegraphics[height=1.5cm]{\pucv@logo}};
   \end{tikzpicture}%
 }
 
@@ -124,7 +196,7 @@
       {\usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}#2\insertsubtitle\par}
     \fi
     \vskip0.9em
-    \pucv@accentrule\par
+    \pucv@accentrule{hero rule}\par
     \vskip0.9em
     {\usebeamercolor[fg]{author}\usebeamerfont{author}\insertauthor\par}
     \ifx\insertinstitute\@empty\else
@@ -163,8 +235,17 @@
 
 % El bloque de texto se ubica bajo el logo y a la izquierda de la imagen de
 % portada; \maketitle lo compone en una diapositiva alineada arriba.
+% Espacio superior reservado para el logo; la portada con grilla lleva el logo
+% en la columna derecha y solo conserva un margen.
+\newlength{\pucv@titletopskip}
+\ifpucv@gridcover
+  \setlength{\pucv@titletopskip}{0.9cm}
+\else
+  \setlength{\pucv@titletopskip}{2.3cm}
+\fi
+
 \defbeamertemplate*{title page}{pucv}{%
-  \setlength{\pucv@titleavail}{\dimexpr\textheight-2.5cm\relax}%
+  \setlength{\pucv@titleavail}{\dimexpr\textheight-\pucv@titletopskip-0.2cm\relax}%
   \pucv@titlefitsfalse
   \@for\pucv@layout:=\pucv@titlelayouts\do{%
     \ifpucv@titlefits\else
@@ -173,13 +254,19 @@
   }%
   % La imagen comienza donde termina el texto (sobre la parte opaca del velo),
   % pero nunca antes de la mitad de la diapositiva. El fondo se dibuja al
-  % generar la página, después de esta plantilla; por eso la asignación es
-  % global.
+  % generar la página, después de esta plantilla; por eso las asignaciones son
+  % globales.
   \global\pucv@coverx=\dimexpr\beamer@leftmargin+\pucv@titlewd-0.8cm\relax
   \ifdim\pucv@coverx<0.5\paperwidth
     \global\pucv@coverx=0.5\paperwidth
   \fi
-  \vspace*{2.3cm}%
+  % Columna de la grilla: lo que deja libre el texto, hasta dos tercios de la
+  % altura de la página.
+  \global\pucv@gridwd=\dimexpr\paperwidth-\beamer@leftmargin-\pucv@titlewd-0.6cm\relax
+  \ifdim\pucv@gridwd>0.6667\paperheight
+    \global\pucv@gridwd=0.6667\paperheight
+  \fi
+  \vspace*{\pucv@titletopskip}%
   \vskip0pt plus 1fill
   \ifpucv@titlefits
     \usebox{\pucv@titlebox}%
@@ -191,6 +278,20 @@
 %% ---------------------------------------------------------------------------
 %% Separador de sección
 %% ---------------------------------------------------------------------------
+% Fondo de los separadores: banda a sangre con el logo blanco y el remate
+% institucional en el modo institucional; fondo normal en los demás modos.
+\defbeamertemplate{background}{pucv section}{%
+  \ifpucv@institutional
+    \begin{tikzpicture}[inner sep=0pt]
+      \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
+      \fill[pucv-section-bg] (0,0) rectangle (\paperwidth,\paperheight);
+      \node[anchor=north east] at (\paperwidth-\beamer@leftmargin,\paperheight-0.6cm)
+        {\includegraphics[height=1.1cm]{\pucv@sectionlogo}};
+      \pucv@brandmark{0.45cm}
+    \end{tikzpicture}%
+  \fi
+}
+
 \defbeamertemplate*{section page}{pucv}{%
   \begin{minipage}{0.8\textwidth}
     \raggedright
@@ -200,8 +301,36 @@
     {\usebeamercolor[fg]{section title}\usebeamerfont{section title}%
       \insertsectionhead\par}
     \vskip1.2em
-    \pucv@accentrule\par
+    \pucv@accentrule{section rule}\par
   \end{minipage}
+}
+
+%% ---------------------------------------------------------------------------
+%% Diapositiva de cierre (\makeclosing, ver beamerthemePUCV.sty)
+%% ---------------------------------------------------------------------------
+\defbeamertemplate{background}{pucv closing}{%
+  \begin{tikzpicture}[inner sep=0pt]
+    \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
+    \fill[pucv-hero-bg] (0,0) rectangle (\paperwidth,\paperheight);
+    \pucv@brandmark{0.45cm}
+  \end{tikzpicture}%
+}
+
+% Logo centrado, mensaje con la fuente del título, línea de acento y datos de
+% contacto opcionales. El espacio alrededor del logo respeta su área de
+% resguardo.
+\defbeamertemplate*{closing page}{pucv}{%
+  \centering
+  \includegraphics[height=1.9cm]{\pucv@logo}\par
+  \vskip1.4cm
+  {\usebeamercolor[fg]{closing}\usebeamerfont{closing}\pucv@closingmessage\par}
+  \vskip0.8em
+  \pucv@accentrule{hero rule}\par
+  \ifx\pucv@closingcontact\@empty\else
+    \vskip0.8em
+    {\usebeamercolor[fg]{institute}\usebeamerfont{institute}%
+      \pucv@closingcontact\par}
+  \fi
 }
 
 %% ---------------------------------------------------------------------------
@@ -231,7 +360,7 @@
 %% ---------------------------------------------------------------------------
 \setbeamertemplate{section in toc}{%
   \leavevmode
-  {\usebeamercolor[fg]{section number}\bfseries
+  {\usebeamercolor[fg]{section number in toc}\bfseries
     \pucv@twodigits{\inserttocsectionnumber}}%
   \hspace{0.8em}\inserttocsection\par}
 \setbeamertemplate{subsection in toc}{%
@@ -245,6 +374,32 @@
 \setbeamertemplate{caption label separator}{.\ }
 \setbeamertemplate{bibliography item}[text]
 \setbeamertemplate{theorems}[numbered]
+
+%% ---------------------------------------------------------------------------
+%% Código
+%% ---------------------------------------------------------------------------
+% Si el documento carga listings, el código usa Roboto Mono y los colores de
+% los roles: palabras clave con el acento, cadenas con el color de ejemplo y
+% comentarios atenuados, sobre la superficie de código.
+\AtBeginDocument{%
+  \@ifpackageloaded{listings}{%
+    \lstset{
+      basicstyle=\ttfamily\small,
+      keywordstyle=\color{pucv-accent}\bfseries,
+      stringstyle=\color{pucv-example},
+      commentstyle=\color{pucv-muted}\itshape,
+      numberstyle=\tiny\color{pucv-muted},
+      backgroundcolor=\color{pucv-code-bg},
+      rulecolor=\color{pucv-rule},
+      frame=single, framerule=0pt,
+      xleftmargin=0.3em, xrightmargin=0.3em,
+      framexleftmargin=0.3em, framexrightmargin=0.3em,
+      columns=fullflexible, keepspaces=true,
+      showstringspaces=false, upquote=true,
+      breaklines=true,
+    }%
+  }{}%
+}
 
 \mode<all>
 

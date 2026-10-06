@@ -7,7 +7,7 @@
 %% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
 %% Consulte el archivo LICENSE para más detalles.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamerfontthemePUCV}[2026/09/23 v2.0 Tema de fuentes beamer PUCV]
+\ProvidesPackage{beamerfontthemePUCV}[2026/10/05 v2.1 Tema de fuentes beamer PUCV]
 
 \RequirePackage{iftex}
 
@@ -19,6 +19,8 @@
   \RequirePackage[T1]{fontenc}
 \fi
 \RequirePackage[sfdefault]{roboto}
+% Roboto Mono para \texttt y el código: legible y coherente con el texto.
+\RequirePackage{roboto-mono}
 
 \setbeamerfont{title}{size=\LARGE, series=\bfseries}
 \setbeamerfont{subtitle}{size=\large, series=\mdseries}
@@ -31,6 +33,8 @@
 
 \setbeamerfont{section title}{size=\huge, series=\bfseries}
 \setbeamerfont{section number}{size=\Huge, series=\bfseries}
+
+\setbeamerfont{closing}{size=\LARGE, series=\bfseries}
 
 \setbeamerfont{block title}{size=\normalsize, series=\bfseries}
 \setbeamerfont{footline}{size=\tiny}

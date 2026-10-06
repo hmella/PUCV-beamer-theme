@@ -7,13 +7,15 @@
 %% Este archivo puede distribuirse y/o modificarse bajo la licencia MIT.
 %% Consulte el archivo LICENSE para más detalles.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamerouterthemePUCV}[2026/09/23 v2.0 Tema externo beamer PUCV]
+\ProvidesPackage{beamerouterthemePUCV}[2026/10/05 v2.1 Tema externo beamer PUCV]
 
 \RequirePackage{tikz}
 
 % Valores de respaldo cuando el tema externo se carga por separado.
 \providecommand*{\pucv@progressbar}{foot}
 \providecommand*{\pucv@numbering}{fraction}
+\@ifundefined{ifpucv@institutional}{\newif\ifpucv@institutional}{}
+\@ifundefined{ifpucv@centenary}{\newif\ifpucv@centenary\pucv@centenarytrue}{}
 
 \mode<presentation>
 
@@ -114,20 +116,65 @@
 % Ancho disponible para el texto del pie (el resto se reserva para el número).
 \newlength{\pucv@footlinewd}
 
-\defbeamertemplate*{footline}{pucv}{%
+% Remate del pie en el modo institucional (bajo el texto):
+%   - Centenario: franja de la grilla de los 100 años desde el borde izquierdo,
+%     como en la plantilla "Base PPT" del manual; el texto queda a su derecha.
+%   - Normas 2023: banda fina con los tres colores de la marca.
+\newlength{\pucv@stripht}
+\newlength{\pucv@footstart}
+% Altura de la franja: 0.4cm, salvo que su ancho (unas 19 veces la altura)
+% supere el 45% de la página, como en 4:3.
+\setlength{\pucv@stripht}{\dimexpr\paperwidth*45/1900\relax}
+\ifdim\pucv@stripht>0.4cm
+  \setlength{\pucv@stripht}{0.4cm}
+\fi
+\newsavebox{\pucv@stripbox}
+\newif\ifpucv@footstrip
+\ifpucv@institutional\ifpucv@centenary\pucv@footstriptrue\fi\fi
+
+\newcommand*{\pucv@footlinebox}{%
   \begin{beamercolorbox}[wd=\paperwidth, ht=2.5ex, dp=1.8ex,
-      leftskip=\pucv@framemargin, rightskip=\pucv@framemargin]{footline}%
+      leftskip=\pucv@footstart, rightskip=\pucv@framemargin]{footline}%
     \usebeamerfont{footline}%
     \setlength{\pucv@footlinewd}{%
-      \dimexpr\paperwidth-2\pucv@framemargin-1.5cm\relax}%
+      \dimexpr\paperwidth-\pucv@footstart-\pucv@framemargin-1.5cm\relax}%
+    % La franja se dibuja a la izquierda del texto, apoyada en el borde
+    % inferior de la caja.
+    \ifpucv@footstrip
+      \llap{\raisebox{-1.8ex}{\usebox{\pucv@stripbox}}\hskip0.4cm}%
+    \fi
     \pucv@footlinetext\hfill
     {\usebeamercolor[fg]{page number in head/foot}%
      \usebeamerfont{page number in head/foot}%
      \usebeamertemplate{page number in head/foot}}%
   \end{beamercolorbox}%
+}
+
+\defbeamertemplate*{footline}{pucv}{%
   \def\pucv@tmp{foot}%
-  \ifx\pucv@progressbar\pucv@tmp
-    \nointerlineskip\pucv@progressbar@draw
+  \ifpucv@footstrip
+    % La barra de progreso va sobre el pie, que lleva la franja a la izquierda
+    % del texto.
+    \ifx\pucv@progressbar\pucv@tmp
+      \nointerlineskip\pucv@progressbar@draw\par
+    \fi
+    \sbox{\pucv@stripbox}{%
+      \includegraphics[height=\pucv@stripht]{beamerthemePUCV-centenario-strip}}%
+    \setlength{\pucv@footstart}{\dimexpr\wd\pucv@stripbox+0.4cm\relax}%
+    \pucv@footlinebox
+  \else
+    \setlength{\pucv@footstart}{\pucv@framemargin}%
+    \pucv@footlinebox
+    \ifx\pucv@progressbar\pucv@tmp
+      \nointerlineskip\pucv@progressbar@draw\par
+    \fi
+    \ifpucv@institutional
+      \nointerlineskip
+      \begin{tikzpicture}
+        \useasboundingbox (0,0) rectangle (\paperwidth,0.08cm);
+        \pucv@tricolorat{0.08cm}% (definido en el tema interno)
+      \end{tikzpicture}%
+    \fi
   \fi
 }
 

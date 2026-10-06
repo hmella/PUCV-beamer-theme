@@ -10,14 +10,16 @@
 %%   \usetheme[<clave>=<valor>, ...]{PUCV}
 %%
 %% Opciones:
-%%   mode        = light | dark                 (por defecto: light)
+%%   mode        = light | dark | institutional (por defecto: light)
+%%   centenary   = true | false                 (por defecto: true; solo en
+%%                                               mode=institutional)
 %%   accent      = blue | red | gold            (por defecto: blue)
 %%   progressbar = foot | head | none           (por defecto: foot)
 %%   sectionpage = true | false                 (por defecto: true)
 %%   numbering   = fraction | counter | none    (por defecto: fraction)
 %%   titleimage  = <archivo> | none             (por defecto: dibujo de la Casa Central)
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamerthemePUCV}[2026/09/23 v2.0 Tema beamer PUCV]
+\ProvidesPackage{beamerthemePUCV}[2026/10/05 v2.1 Tema beamer PUCV]
 
 \RequirePackage{pgfopts}
 
@@ -27,13 +29,17 @@
 %% Opciones
 %% ---------------------------------------------------------------------------
 \newif\ifpucv@dark
+\newif\ifpucv@institutional
+\newif\ifpucv@centenary
 \newif\ifpucv@sectionpage
 
 \pgfkeys{
   /pucv/.is family, /pucv,
   mode/.is choice,
-  mode/light/.code       = \pucv@darkfalse,
-  mode/dark/.code        = \pucv@darktrue,
+  mode/light/.code       = \pucv@darkfalse\pucv@institutionalfalse,
+  mode/dark/.code        = \pucv@darktrue\pucv@institutionalfalse,
+  mode/institutional/.code = \pucv@darkfalse\pucv@institutionaltrue,
+  centenary/.is if       = pucv@centenary,
   accent/.is choice,
   accent/blue/.code      = \def\pucv@accent{blue},
   accent/red/.code       = \def\pucv@accent{red},
@@ -50,6 +56,7 @@
   titleimage/.store in   = \pucv@titleimage,
   % Valores por defecto
   mode        = light,
+  centenary   = true,
   accent      = blue,
   progressbar = foot,
   sectionpage = true,
@@ -107,15 +114,32 @@
 %% ---------------------------------------------------------------------------
 %% Diapositivas separadoras de sección automáticas
 %% ---------------------------------------------------------------------------
+% El fondo `pucv section' es el fondo normal en los modos claro y oscuro, y una
+% banda a sangre en el modo institucional.
 \ifpucv@sectionpage
   \AtBeginSection{%
     \ifbeamer@inframe
       \sectionpage
     \else
-      \frame[plain,noframenumbering]{\sectionpage}%
+      {%
+        \setbeamertemplate{background}[pucv section]%
+        \frame[plain,noframenumbering]{\sectionpage}%
+      }%
     \fi
   }
 \fi
+
+%% ---------------------------------------------------------------------------
+%% Diapositiva de cierre: \makeclosing[<contacto>]{<mensaje>}
+%% ---------------------------------------------------------------------------
+\newcommand*{\makeclosing}[2][]{%
+  {%
+    \def\pucv@closingcontact{#1}%
+    \def\pucv@closingmessage{#2}%
+    \setbeamertemplate{background}[pucv closing]%
+    \frame[plain,noframenumbering,c]{\usebeamertemplate{closing page}}%
+  }%
+}
 
 \mode<all>
 

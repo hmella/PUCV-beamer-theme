@@ -1,11 +1,12 @@
 % Presentación de ejemplo del tema beamer PUCV.
 %
-% Desde la raíz del repositorio, compile con `make' (versiones clara y oscura)
-% o directamente con `latexmk examples/presentacion.tex'.
+% Desde la raíz del repositorio, compile con `make' (versiones clara, oscura e
+% institucional) o directamente con `latexmk examples/presentacion.tex'.
 
 % Proporción de la página (16:9 por defecto); `make examples' la cambia a 4:3.
 \providecommand*{\proporcion}{169}
-\documentclass[11pt,aspectratio=\proporcion]{beamer}
+% `xcolor=table' permite colorear filas de tablas con \rowcolor.
+\documentclass[11pt,aspectratio=\proporcion,xcolor=table]{beamer}
 
 % `es-noshorthands' evita conflictos entre los atajos del español y las
 % especificaciones de overlays de beamer (<2->, etc.).
@@ -13,9 +14,11 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{appendixnumberbeamer}
+\usepackage{listings}
 
 \usetheme{PUCV}
 % Opciones, por ejemplo: \usetheme[mode=dark, accent=red, progressbar=head]{PUCV}
+% o \usetheme[mode=institutional]{PUCV} para la gráfica institucional.
 
 \title{Tema beamer PUCV para presentaciones académicas}
 \subtitle{Una plantilla moderna para charlas y clases}
@@ -97,7 +100,8 @@
         \centering
         \begin{tabular}{lrr}
           \toprule
-          Método & Error (\%) & Tiempo (s) \\
+          \rowcolor{pucv-table-head}
+          \structure{Método} & \structure{Error (\%)} & \structure{Tiempo (s)} \\
           \midrule
           Referencia & 12.4 & 0.8 \\
           Propuesto & \textbf{7.9} & 1.1 \\
@@ -116,6 +120,19 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}[fragile]{Código}{Resaltado con los colores del tema}
+  \begin{lstlisting}[language=Python]
+import numpy as np
+
+def dtft(x, w):
+    """Transformada de Fourier en tiempo discreto."""
+    n = np.arange(len(x))
+    return np.exp(-1j * np.outer(w, n)) @ x  # suma sobre n
+  \end{lstlisting}
+  Basta con \texttt{\textbackslash usepackage\{listings\}}: el tema configura
+  la fuente (Roboto Mono) y los colores.
+\end{frame}
+
 \begin{frame}{Overlays}
   \setbeamercovered{transparent}
   \begin{itemize}
@@ -132,11 +149,12 @@
     \item Configure el tema con \texttt{\textbackslash usetheme[<clave>=<valor>]\{PUCV\}}
     \item Use \texttt{mode=dark} para una presentación oscura
     \item Los separadores de sección se agregan automáticamente
+    \item Use \texttt{mode=institutional} para la gráfica institucional
+    \item \texttt{\textbackslash makeclosing} genera la diapositiva de cierre
   \end{itemize}
-  \vfill
-  \centering
-  {\usebeamerfont{frametitle}\usebeamercolor[fg]{structure}¡Muchas gracias!}
 \end{frame}
+
+\makeclosing[hernan.mella@pucv.cl]{¡Muchas gracias!}
 
 \appendix
 
